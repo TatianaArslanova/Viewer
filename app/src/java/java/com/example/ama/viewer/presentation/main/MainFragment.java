@@ -3,7 +3,11 @@ package com.example.ama.viewer.presentation.main;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,6 +26,7 @@ public class MainFragment
         implements MainView {
 
     private TextView contentView;
+    private SwipeRefreshLayout srlLayout;
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -31,6 +36,7 @@ public class MainFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -42,7 +48,23 @@ public class MainFragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         contentView = view.findViewById(R.id.contentView);
+        srlLayout = view.findViewById(R.id.srl_layout);
+        srlLayout.setOnRefreshListener(() -> loadData(true));
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.mi_refresh) {
+            loadData(false);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -64,6 +86,7 @@ public class MainFragment
 
     @Override
     protected String getErrorMessage(Throwable e, boolean pullToRefresh) {
+        if (pullToRefresh) srlLayout.setRefreshing(false);
         String message = e.getMessage();
         return message != null ? message : getResources().getString(R.string.unknown_error);
     }
@@ -75,6 +98,12 @@ public class MainFragment
 
     @Override
     public void loadData(boolean pullToRefresh) {
-        getPresenter().loadData();
+        getPresenter().loadData(pullToRefresh);
+    }
+
+    @Override
+    public void showContent() {
+        super.showContent();
+        srlLayout.setRefreshing(false);
     }
 }

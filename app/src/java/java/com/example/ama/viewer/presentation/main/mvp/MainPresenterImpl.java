@@ -9,7 +9,6 @@ import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainPresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
 
@@ -21,16 +20,17 @@ public class MainPresenterImpl extends MvpBasePresenter<MainView> implements Mai
     }
 
     @Override
-    public void loadData() {
+    public void loadData(boolean pullToRefresh) {
         ifViewAttached(view -> {
-            view.showLoading(false);
+            view.showLoading(pullToRefresh);
             disposable.add(repository.loadData()
-                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(s -> {
-                        view.setData(s);
-                        view.showContent();
-                    }));
+                    .subscribe(
+                            s -> {
+                                view.setData(s);
+                                view.showContent();
+                            },
+                            throwable -> view.showError(throwable, pullToRefresh)));
         });
     }
 
