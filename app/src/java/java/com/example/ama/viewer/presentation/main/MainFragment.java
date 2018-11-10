@@ -106,4 +106,18 @@ public class MainFragment
         super.showContent();
         srlLayout.setRefreshing(false);
     }
+
+    @Override
+    protected void animateErrorViewIn() {
+        contentView.setVisibility(View.GONE);
+        errorView.setVisibility(View.VISIBLE);
+        loadingView.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void animateContentViewIn() {
+        contentView.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
+        loadingView.setVisibility(View.GONE);
+    }
 }
