@@ -73,4 +73,16 @@ class MainFragment : MvpLceViewStateFragment<TextView, String, MainView, MainPre
         super.showContent()
         srl_layout.isRefreshing = false
     }
+
+    override fun animateErrorViewIn() {
+        contentView.visibility = View.GONE
+        errorView.visibility = View.VISIBLE
+        loadingView.visibility = View.GONE
+    }
+
+    override fun animateContentViewIn() {
+        contentView.visibility = View.VISIBLE
+        errorView.visibility = View.GONE
+        loadingView.visibility = View.GONE
+    }
 }
