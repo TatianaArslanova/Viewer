@@ -6,7 +6,6 @@ import com.example.ama.viewer.presentation.main.mvp.base.MainView
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 
 class MainPresenterImpl(private val repository: DataRepository) : MvpBasePresenter<MainView>(), MainPresenter {
 
@@ -18,15 +17,15 @@ class MainPresenterImpl(private val repository: DataRepository) : MvpBasePresent
                 view.showLoading(pullToRefresh)
                 compositeDisposable.add(
                         repository.loadData()
-                                .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe { s: String? ->
+                                .subscribe({ s: String? ->
                                     run {
                                         view.setData(s)
                                         view.showContent()
                                     }
-                                }
-                )
+                                },
+                                        { throwable -> view.showError(throwable, pullToRefresh) }
+                                ))
             }
         }
     }

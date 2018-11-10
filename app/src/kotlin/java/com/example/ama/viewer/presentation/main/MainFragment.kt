@@ -66,7 +66,7 @@ class MainFragment : MvpLceViewStateFragment<TextView, String, MainView, MainPre
 
     override fun getErrorMessage(e: Throwable?, pullToRefresh: Boolean): String {
         if (pullToRefresh) srl_layout.isRefreshing = false
-        return resources.getString(R.string.unknown_error)
+        return e?.message ?: resources.getString(R.string.unknown_error)
     }
 
     override fun showContent() {
