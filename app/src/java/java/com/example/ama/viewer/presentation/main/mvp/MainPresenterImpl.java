@@ -36,7 +36,9 @@ public class MainPresenterImpl extends MvpBasePresenter<MainView> implements Mai
 
     @Override
     public void attachView(@NonNull MainView view) {
-        disposable = new CompositeDisposable();
+        if (disposable==null) {
+            disposable = new CompositeDisposable();
+        }
         super.attachView(view);
     }
 

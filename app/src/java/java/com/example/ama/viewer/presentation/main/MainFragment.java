@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.ama.viewer.R;
@@ -26,6 +27,8 @@ public class MainFragment
         implements MainView {
 
     private TextView contentView;
+    private TextView errorView;
+    private ProgressBar loadingView;
     private SwipeRefreshLayout srlLayout;
 
     public static MainFragment newInstance() {
@@ -47,10 +50,20 @@ public class MainFragment
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        contentView = view.findViewById(R.id.contentView);
-        srlLayout = view.findViewById(R.id.srl_layout);
-        srlLayout.setOnRefreshListener(() -> loadData(true));
+        initUi(view);
+        setListeners();
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void initUi(View view) {
+        contentView = view.findViewById(R.id.contentView);
+        errorView = view.findViewById(R.id.errorView);
+        loadingView = view.findViewById(R.id.loadingView);
+        srlLayout = view.findViewById(R.id.srl_layout);
+    }
+
+    private void setListeners() {
+        srlLayout.setOnRefreshListener(() -> loadData(true));
     }
 
     @Override
