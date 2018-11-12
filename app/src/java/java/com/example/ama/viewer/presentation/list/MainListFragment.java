@@ -4,17 +4,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.example.ama.viewer.R;
 import com.example.ama.viewer.data.repo.DataRepositoryImpl;
+import com.example.ama.viewer.presentation.list.adapter.MainListAdapter;
 import com.example.ama.viewer.presentation.list.mvp.MainListPresenterImpl;
 import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter;
 import com.example.ama.viewer.presentation.list.mvp.base.MainView;
@@ -22,14 +23,14 @@ import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.MvpLceViewStateFragment;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState;
 
+import java.util.List;
+
 public class MainListFragment
-        extends MvpLceViewStateFragment<TextView, String, MainView, MainPresenter>
+        extends MvpLceViewStateFragment<RecyclerView, List<String>, MainView, MainPresenter>
         implements MainView {
 
-    private TextView contentView;
-    private TextView errorView;
-    private ProgressBar loadingView;
     private SwipeRefreshLayout srlLayout;
+    private MainListAdapter adapter;
 
     public static MainListFragment newInstance() {
         return new MainListFragment();
@@ -49,15 +50,15 @@ public class MainListFragment
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initUi(view);
         setListeners();
-        super.onViewCreated(view, savedInstanceState);
     }
 
     private void initUi(View view) {
-        contentView = view.findViewById(R.id.contentView);
-        errorView = view.findViewById(R.id.errorView);
-        loadingView = view.findViewById(R.id.loadingView);
+        contentView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new MainListAdapter();
+        contentView.setAdapter(adapter);
         srlLayout = view.findViewById(R.id.srl_layout);
     }
 
@@ -80,8 +81,8 @@ public class MainListFragment
     }
 
     @Override
-    public String getData() {
-        return contentView.getText().toString();
+    public List<String> getData() {
+        return adapter.getItems();
     }
 
     @NonNull
@@ -92,7 +93,7 @@ public class MainListFragment
 
     @NonNull
     @Override
-    public LceViewState<String, MainView> createViewState() {
+    public LceViewState<List<String>, MainView> createViewState() {
         return new RetainingLceViewState<>();
     }
 
@@ -104,11 +105,6 @@ public class MainListFragment
     }
 
     @Override
-    public void setData(String data) {
-        contentView.setText(data);
-    }
-
-    @Override
     public void loadData(boolean pullToRefresh) {
         getPresenter().loadData(pullToRefresh);
     }
@@ -117,6 +113,12 @@ public class MainListFragment
     public void showContent() {
         srlLayout.setRefreshing(false);
         super.showContent();
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setData(List<String> data) {
+        adapter.setItems(data);
     }
 
     @Override
@@ -139,5 +141,10 @@ public class MainListFragment
     protected void animateLoadingViewIn() {
         super.animateLoadingViewIn();
         srlLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void appendItemToList(String item) {
+        adapter.appendItem(item);
     }
 }

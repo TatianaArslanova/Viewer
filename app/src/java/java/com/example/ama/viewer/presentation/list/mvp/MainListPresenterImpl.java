@@ -47,7 +47,7 @@ public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements
 
     private void showContent(String content) {
         ifViewAttached(view -> {
-            view.setData(content);
+            view.appendItemToList(content);
             view.showContent();
         });
     }
