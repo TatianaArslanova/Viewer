@@ -38,7 +38,6 @@ public class MainFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -73,7 +72,7 @@ public class MainFragment
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.mi_refresh) {
+        if (item.getItemId() == R.id.mi_refresh && !viewState.isLoadingState()) {
             loadData(false);
             return true;
         }
@@ -116,8 +115,8 @@ public class MainFragment
 
     @Override
     public void showContent() {
-        super.showContent();
         srlLayout.setRefreshing(false);
+        super.showContent();
     }
 
     @Override
@@ -125,6 +124,7 @@ public class MainFragment
         contentView.setVisibility(View.GONE);
         errorView.setVisibility(View.VISIBLE);
         loadingView.setVisibility(View.GONE);
+        srlLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -132,5 +132,12 @@ public class MainFragment
         contentView.setVisibility(View.VISIBLE);
         errorView.setVisibility(View.GONE);
         loadingView.setVisibility(View.GONE);
+        srlLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void animateLoadingViewIn() {
+        super.animateLoadingViewIn();
+        srlLayout.setVisibility(View.GONE);
     }
 }

@@ -21,22 +21,17 @@ public class MainPresenterImpl extends MvpBasePresenter<MainView> implements Mai
 
     @Override
     public void loadData(boolean pullToRefresh) {
-        ifViewAttached(view -> {
-            view.showLoading(pullToRefresh);
-            disposable.add(repository.loadData()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            s -> {
-                                view.setData(s);
-                                view.showContent();
-                            },
-                            throwable -> view.showError(throwable, pullToRefresh)));
-        });
+        ifViewAttached(view -> disposable.add(repository.loadData()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.showLoading(pullToRefresh))
+                .subscribe(
+                        this::showContent,
+                        throwable -> showError(throwable, pullToRefresh))));
     }
 
     @Override
     public void attachView(@NonNull MainView view) {
-        if (disposable==null) {
+        if (disposable == null) {
             disposable = new CompositeDisposable();
         }
         super.attachView(view);
@@ -46,5 +41,16 @@ public class MainPresenterImpl extends MvpBasePresenter<MainView> implements Mai
     public void destroy() {
         disposable.clear();
         super.destroy();
+    }
+
+    private void showContent(String content) {
+        ifViewAttached(view -> {
+            view.setData(content);
+            view.showContent();
+        });
+    }
+
+    private void showError(Throwable throwable, boolean pullToRefresh) {
+        ifViewAttached(view -> view.showError(throwable, pullToRefresh));
     }
 }
