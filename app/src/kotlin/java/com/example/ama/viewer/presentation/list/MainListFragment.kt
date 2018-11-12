@@ -1,11 +1,13 @@
 package com.example.ama.viewer.presentation.list
 
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.*
-import android.widget.TextView
 import com.example.ama.viewer.R
 import com.example.ama.viewer.data.repo.DataRepositoryImpl
 import com.example.ama.viewer.presentation.list.mvp.MainListPresenterImpl
+import com.example.ama.viewer.presentation.list.mvp.adapter.MainListAdapter
 import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter
 import com.example.ama.viewer.presentation.list.mvp.base.MainView
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState
@@ -13,7 +15,9 @@ import com.hannesdorfmann.mosby3.mvp.viewstate.lce.MvpLceViewStateFragment
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState
 import kotlinx.android.synthetic.main.fragment_main.*
 
-class MainListFragment : MvpLceViewStateFragment<TextView, String, MainView, MainPresenter>(), MainView {
+class MainListFragment : MvpLceViewStateFragment<RecyclerView, List<String>, MainView, MainPresenter>(), MainView {
+
+    val adapter: MainListAdapter = MainListAdapter()
 
     companion object {
         fun newInstance() = MainListFragment()
@@ -29,8 +33,10 @@ class MainListFragment : MvpLceViewStateFragment<TextView, String, MainView, Mai
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        srl_layout.setOnRefreshListener { loadData(true) }
         super.onViewCreated(view, savedInstanceState)
+        srl_layout.setOnRefreshListener { loadData(true) }
+        contentView.layoutManager = LinearLayoutManager(context)
+        contentView.adapter = adapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -52,16 +58,18 @@ class MainListFragment : MvpLceViewStateFragment<TextView, String, MainView, Mai
     override fun createPresenter(): MainPresenter =
             MainListPresenterImpl(DataRepositoryImpl())
 
-    override fun createViewState(): LceViewState<String, MainView> =
-            RetainingLceViewState<String, MainView>()
+    override fun createViewState(): LceViewState<List<String>, MainView> =
+            RetainingLceViewState<List<String>, MainView>()
 
-    override fun setData(data: String?) {
-        if (data != null) {
-            contentView.text = data
-        }
+    override fun setData(data: List<String>) {
+        adapter.setItems(data)
     }
 
-    override fun getData() = contentView.text.toString()
+    override fun getData() = adapter.items
+
+    override fun appendItemToList(item: String) {
+        adapter.appendItemToList(item)
+    }
 
     override fun getErrorMessage(e: Throwable?, pullToRefresh: Boolean): String {
         if (pullToRefresh) srl_layout.isRefreshing = false
@@ -71,6 +79,7 @@ class MainListFragment : MvpLceViewStateFragment<TextView, String, MainView, Mai
     override fun showContent() {
         srl_layout.isRefreshing = false
         super.showContent()
+        adapter.notifyDataSetChanged()
     }
 
     override fun animateErrorViewIn() {

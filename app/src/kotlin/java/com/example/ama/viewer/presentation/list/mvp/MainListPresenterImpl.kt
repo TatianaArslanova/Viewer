@@ -34,7 +34,7 @@ class MainListPresenterImpl(private val repository: DataRepository) : MvpBasePre
 
     private fun showContent(content: String) {
         ifViewAttached { view ->
-            view.setData(content)
+            view.appendItemToList(content)
             view.showContent()
         }
     }
