@@ -1,22 +1,22 @@
-package com.example.ama.viewer.presentation.main
+package com.example.ama.viewer.presentation.list
 
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import com.example.ama.viewer.R
 import com.example.ama.viewer.data.repo.DataRepositoryImpl
-import com.example.ama.viewer.presentation.main.mvp.MainPresenterImpl
-import com.example.ama.viewer.presentation.main.mvp.base.MainPresenter
-import com.example.ama.viewer.presentation.main.mvp.base.MainView
+import com.example.ama.viewer.presentation.list.mvp.MainListPresenterImpl
+import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter
+import com.example.ama.viewer.presentation.list.mvp.base.MainView
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.MvpLceViewStateFragment
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState
 import kotlinx.android.synthetic.main.fragment_main.*
 
-class MainFragment : MvpLceViewStateFragment<TextView, String, MainView, MainPresenter>(), MainView {
+class MainListFragment : MvpLceViewStateFragment<TextView, String, MainView, MainPresenter>(), MainView {
 
     companion object {
-        fun newInstance() = MainFragment()
+        fun newInstance() = MainListFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +50,7 @@ class MainFragment : MvpLceViewStateFragment<TextView, String, MainView, MainPre
     }
 
     override fun createPresenter(): MainPresenter =
-            MainPresenterImpl(DataRepositoryImpl())
+            MainListPresenterImpl(DataRepositoryImpl())
 
     override fun createViewState(): LceViewState<String, MainView> =
             RetainingLceViewState<String, MainView>()

@@ -1,13 +1,13 @@
-package com.example.ama.viewer.presentation.main.mvp
+package com.example.ama.viewer.presentation.list.mvp
 
 import com.example.ama.viewer.data.repo.DataRepository
-import com.example.ama.viewer.presentation.main.mvp.base.MainPresenter
-import com.example.ama.viewer.presentation.main.mvp.base.MainView
+import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter
+import com.example.ama.viewer.presentation.list.mvp.base.MainView
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 
-class MainPresenterImpl(private val repository: DataRepository) : MvpBasePresenter<MainView>(), MainPresenter {
+class MainListPresenterImpl(private val repository: DataRepository) : MvpBasePresenter<MainView>(), MainPresenter {
 
     companion object {
         const val ON_ERROR_STRING = ""
