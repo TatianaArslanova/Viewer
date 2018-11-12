@@ -1,7 +1,7 @@
 package com.example.ama.viewer.data.repo
 
-import io.reactivex.Single
+import io.reactivex.Observable
 
 interface DataRepository {
-    fun loadData(): Single<String>
+    fun loadData(): Observable<String>
 }
