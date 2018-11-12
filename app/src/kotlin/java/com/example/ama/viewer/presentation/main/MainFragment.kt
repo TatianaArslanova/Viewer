@@ -21,7 +21,6 @@ class MainFragment : MvpLceViewStateFragment<TextView, String, MainView, MainPre
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        retainInstance = true
         setHasOptionsMenu(true)
     }
 
@@ -39,7 +38,7 @@ class MainFragment : MvpLceViewStateFragment<TextView, String, MainView, MainPre
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.mi_refresh) {
+        if (item?.itemId == R.id.mi_refresh && !viewState.isLoadingState) {
             loadData(false)
             return true
         }
@@ -70,19 +69,26 @@ class MainFragment : MvpLceViewStateFragment<TextView, String, MainView, MainPre
     }
 
     override fun showContent() {
-        super.showContent()
         srl_layout.isRefreshing = false
+        super.showContent()
     }
 
     override fun animateErrorViewIn() {
         contentView.visibility = View.GONE
         errorView.visibility = View.VISIBLE
         loadingView.visibility = View.GONE
+        srl_layout.visibility = View.VISIBLE
     }
 
     override fun animateContentViewIn() {
         contentView.visibility = View.VISIBLE
         errorView.visibility = View.GONE
         loadingView.visibility = View.GONE
+        srl_layout.visibility = View.VISIBLE
+    }
+
+    override fun animateLoadingViewIn() {
+        super.animateLoadingViewIn()
+        srl_layout.visibility = View.GONE
     }
 }

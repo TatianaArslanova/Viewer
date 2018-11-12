@@ -13,25 +13,28 @@ class MainPresenterImpl(private val repository: DataRepository) : MvpBasePresent
 
     override fun loadData(pullToRefresh: Boolean) {
         ifViewAttached { view ->
-            run {
-                view.showLoading(pullToRefresh)
-                compositeDisposable.add(
-                        repository.loadData()
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({ s: String? ->
-                                    run {
-                                        view.setData(s)
-                                        view.showContent()
-                                    }
-                                },
-                                        { throwable -> view.showError(throwable, pullToRefresh) }
-                                ))
-            }
+            compositeDisposable.add(
+                    repository.loadData()
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnSubscribe { view.showLoading(pullToRefresh) }
+                            .subscribe(this::showContent)
+                            { throwable -> showError(throwable, pullToRefresh) })
         }
     }
 
     override fun destroy() {
         compositeDisposable.clear()
         super.destroy()
+    }
+
+    private fun showContent(content: String) {
+        ifViewAttached { view ->
+            view.setData(content)
+            view.showContent()
+        }
+    }
+
+    private fun showError(throwable: Throwable, pullToRefresh: Boolean) {
+        ifViewAttached { view -> view.showError(throwable, pullToRefresh) }
     }
 }
