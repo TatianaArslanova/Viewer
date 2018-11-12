@@ -9,12 +9,17 @@ import io.reactivex.disposables.CompositeDisposable
 
 class MainPresenterImpl(private val repository: DataRepository) : MvpBasePresenter<MainView>(), MainPresenter {
 
+    companion object {
+        const val ON_ERROR_STRING = ""
+    }
+
     private val compositeDisposable = CompositeDisposable()
 
     override fun loadData(pullToRefresh: Boolean) {
         ifViewAttached { view ->
             compositeDisposable.add(
                     repository.loadData()
+                            .onErrorReturn { ON_ERROR_STRING }
                             .observeOn(AndroidSchedulers.mainThread())
                             .doOnSubscribe { view.showLoading(pullToRefresh) }
                             .subscribe(this::showContent)
