@@ -1,22 +1,22 @@
-package com.example.ama.viewer.presentation.main.mvp;
+package com.example.ama.viewer.presentation.list.mvp;
 
 import android.support.annotation.NonNull;
 
 import com.example.ama.viewer.data.repo.DataRepository;
-import com.example.ama.viewer.presentation.main.mvp.base.MainPresenter;
-import com.example.ama.viewer.presentation.main.mvp.base.MainView;
+import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter;
+import com.example.ama.viewer.presentation.list.mvp.base.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class MainPresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
+public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
 
     private final static String ON_ERROR_STRING = "";
     private DataRepository repository;
     private CompositeDisposable disposable;
 
-    public MainPresenterImpl(DataRepository dataRepository) {
+    public MainListPresenterImpl(DataRepository dataRepository) {
         repository = dataRepository;
     }
 

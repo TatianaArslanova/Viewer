@@ -1,4 +1,4 @@
-package com.example.ama.viewer.presentation.main;
+package com.example.ama.viewer.presentation.list;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,14 +15,14 @@ import android.widget.TextView;
 
 import com.example.ama.viewer.R;
 import com.example.ama.viewer.data.repo.DataRepositoryImpl;
-import com.example.ama.viewer.presentation.main.mvp.MainPresenterImpl;
-import com.example.ama.viewer.presentation.main.mvp.base.MainPresenter;
-import com.example.ama.viewer.presentation.main.mvp.base.MainView;
+import com.example.ama.viewer.presentation.list.mvp.MainListPresenterImpl;
+import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter;
+import com.example.ama.viewer.presentation.list.mvp.base.MainView;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.MvpLceViewStateFragment;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState;
 
-public class MainFragment
+public class MainListFragment
         extends MvpLceViewStateFragment<TextView, String, MainView, MainPresenter>
         implements MainView {
 
@@ -31,8 +31,8 @@ public class MainFragment
     private ProgressBar loadingView;
     private SwipeRefreshLayout srlLayout;
 
-    public static MainFragment newInstance() {
-        return new MainFragment();
+    public static MainListFragment newInstance() {
+        return new MainListFragment();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class MainFragment
     @NonNull
     @Override
     public MainPresenter createPresenter() {
-        return new MainPresenterImpl(new DataRepositoryImpl());
+        return new MainListPresenterImpl(new DataRepositoryImpl());
     }
 
     @NonNull

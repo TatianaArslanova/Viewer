@@ -1,4 +1,4 @@
-package com.example.ama.viewer.presentation.main.mvp.base;
+package com.example.ama.viewer.presentation.list.mvp.base;
 
 import com.hannesdorfmann.mosby3.mvp.MvpPresenter;
 
