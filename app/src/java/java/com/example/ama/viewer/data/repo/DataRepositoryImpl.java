@@ -3,25 +3,40 @@ package com.example.ama.viewer.data.repo;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Single;
+import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
 public class DataRepositoryImpl implements DataRepository {
     private static final String TEXT = "TEXT ";
-    private boolean wasLoaded = false;
+    private static final int ELEMENTS_TO_TAKE = 5;
+    private static final int ERROR_CHANCE = 20;
 
     @Override
-    public Single<String> loadData() {
-        return Single.fromCallable(this::getRandomText)
-                .delaySubscription(2000, TimeUnit.MILLISECONDS, Schedulers.io());
+    public Observable<String> loadData() {
+        return getSomeStringData()
+                .zipWith(getSomeLongData(), (s, aLong) -> aLong + s)
+                .doOnNext(__ -> tryToSimulateError())
+                .take(ELEMENTS_TO_TAKE);
+    }
+
+    private Observable<String> getSomeStringData() {
+        return Observable.fromCallable(this::getRandomText)
+                .subscribeOn(Schedulers.io())
+                .delay(1000, TimeUnit.MILLISECONDS)
+                .repeat();
+    }
+
+    private Observable<Long> getSomeLongData() {
+        return Observable.interval(1000, TimeUnit.MILLISECONDS, Schedulers.io());
     }
 
     private String getRandomText() {
-        if (wasLoaded) {
-            wasLoaded = false;
+        return TEXT + new Random().nextInt();
+    }
+
+    private void tryToSimulateError() {
+        if (new Random().nextInt(100) < ERROR_CHANCE) {
             throw new IllegalStateException("Not found");
         }
-        wasLoaded = true;
-        return TEXT + new Random().nextInt();
     }
 }
