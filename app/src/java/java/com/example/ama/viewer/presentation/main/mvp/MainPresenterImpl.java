@@ -12,6 +12,7 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class MainPresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
 
+    private final static String ON_ERROR_STRING = "";
     private DataRepository repository;
     private CompositeDisposable disposable;
 
@@ -22,6 +23,7 @@ public class MainPresenterImpl extends MvpBasePresenter<MainView> implements Mai
     @Override
     public void loadData(boolean pullToRefresh) {
         ifViewAttached(view -> disposable.add(repository.loadData()
+                .onErrorReturn(__ -> ON_ERROR_STRING)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.showLoading(pullToRefresh))
                 .subscribe(
