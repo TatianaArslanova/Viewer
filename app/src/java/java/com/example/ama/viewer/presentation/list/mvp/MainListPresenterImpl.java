@@ -13,9 +13,9 @@ import io.reactivex.disposables.CompositeDisposable;
 public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
 
     private final static String ON_ERROR_STRING = "";
-    private DataRepository dataRepository;
+    private final DataRepository dataRepository;
     private CompositeDisposable disposable;
-    private Scheduler observeOnScheduler;
+    private final Scheduler observeOnScheduler;
 
     public MainListPresenterImpl(DataRepository dataRepository, Scheduler observeOnScheduler) {
         this.dataRepository = dataRepository;

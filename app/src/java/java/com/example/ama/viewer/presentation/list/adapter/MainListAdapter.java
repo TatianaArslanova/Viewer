@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> {
 
-    private List<String> items = new ArrayList<>();
+    private final List<String> items = new ArrayList<>();
 
     @NonNull
     @Override
@@ -34,7 +34,9 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> {
     }
 
     public void setItems(List<String> items) {
-        this.items = items;
+        this.items.clear();
+        this.items.addAll(items);
+        notifyDataSetChanged();
     }
 
     public List<String> getItems() {
@@ -43,5 +45,6 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListViewHolder> {
 
     public void appendItem(String item) {
         items.add(item);
+        notifyItemInserted(items.size()-1);
     }
 }

@@ -117,7 +117,6 @@ public class MainListFragment
     public void showContent() {
         srlLayout.setRefreshing(false);
         super.showContent();
-        adapter.notifyDataSetChanged();
     }
 
     @Override
