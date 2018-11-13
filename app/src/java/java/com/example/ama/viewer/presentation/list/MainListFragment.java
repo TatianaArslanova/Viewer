@@ -25,6 +25,8 @@ import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState;
 
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+
 public class MainListFragment
         extends MvpLceViewStateFragment<RecyclerView, List<String>, MainView, MainPresenter>
         implements MainView {
@@ -88,7 +90,9 @@ public class MainListFragment
     @NonNull
     @Override
     public MainPresenter createPresenter() {
-        return new MainListPresenterImpl(new DataRepositoryImpl());
+        return new MainListPresenterImpl(
+                new DataRepositoryImpl(),
+                AndroidSchedulers.mainThread());
     }
 
     @NonNull

@@ -7,24 +7,26 @@ import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter;
 import com.example.ama.viewer.presentation.list.mvp.base.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
 
     private final static String ON_ERROR_STRING = "";
-    private DataRepository repository;
+    private DataRepository dataRepository;
     private CompositeDisposable disposable;
+    private Scheduler observeOnScheduler;
 
-    public MainListPresenterImpl(DataRepository dataRepository) {
-        repository = dataRepository;
+    public MainListPresenterImpl(DataRepository dataRepository, Scheduler observeOnScheduler) {
+        this.dataRepository = dataRepository;
+        this.observeOnScheduler = observeOnScheduler;
     }
 
     @Override
     public void loadData(boolean pullToRefresh) {
-        ifViewAttached(view -> disposable.add(repository.loadData()
+        ifViewAttached(view -> disposable.add(dataRepository.loadData()
                 .onErrorReturn(__ -> ON_ERROR_STRING)
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(observeOnScheduler)
                 .doOnSubscribe(__ -> view.showLoading(pullToRefresh))
                 .subscribe(
                         this::showContent,
