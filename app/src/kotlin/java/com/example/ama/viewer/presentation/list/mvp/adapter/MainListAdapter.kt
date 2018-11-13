@@ -21,9 +21,11 @@ class MainListAdapter : RecyclerView.Adapter<MainListViewHolder>() {
     fun setItems(data: List<String>) {
         items.clear()
         items.addAll(data)
+        notifyDataSetChanged()
     }
 
     fun appendItemToList(item: String) {
         items.add(item)
+        notifyItemInserted(items.lastIndex)
     }
 }

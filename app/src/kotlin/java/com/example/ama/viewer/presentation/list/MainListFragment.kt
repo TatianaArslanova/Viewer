@@ -80,7 +80,6 @@ class MainListFragment : MvpLceViewStateFragment<RecyclerView, List<String>, Mai
     override fun showContent() {
         srl_layout.isRefreshing = false
         super.showContent()
-        adapter.notifyDataSetChanged()
     }
 
     override fun animateErrorViewIn() {
