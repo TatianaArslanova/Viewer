@@ -13,11 +13,12 @@ import com.example.ama.viewer.presentation.list.mvp.base.MainView
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.MvpLceViewStateFragment
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainListFragment : MvpLceViewStateFragment<RecyclerView, List<String>, MainView, MainPresenter>(), MainView {
 
-    val adapter: MainListAdapter = MainListAdapter()
+    private val adapter: MainListAdapter = MainListAdapter()
 
     companion object {
         fun newInstance() = MainListFragment()
@@ -56,7 +57,7 @@ class MainListFragment : MvpLceViewStateFragment<RecyclerView, List<String>, Mai
     }
 
     override fun createPresenter(): MainPresenter =
-            MainListPresenterImpl(DataRepositoryImpl())
+            MainListPresenterImpl(DataRepositoryImpl(), AndroidSchedulers.mainThread())
 
     override fun createViewState(): LceViewState<List<String>, MainView> =
             RetainingLceViewState<List<String>, MainView>()
