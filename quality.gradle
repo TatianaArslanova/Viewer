@@ -1,0 +1,60 @@
+apply plugin: 'checkstyle'
+checkstyle {
+    toolVersion = '8.14'
+}
+task checkstyle(type: Checkstyle) {
+    ignoreFailures = false
+    configFile file("$project.rootDir/config/checkstyle.xml")
+
+    source 'src/java/java'
+    classpath = files()
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+apply plugin: 'findbugs'
+task findbugs(type: FindBugs) {
+    ignoreFailures = true
+    effort = 'max'
+    reportLevel = 'low'
+
+    excludeFilter = new File("$project.rootDir/config/findbugs.xml")
+    classes = files("$project.buildDir/intermediates/javac")
+    source 'src/java/java'
+    classpath = files()
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+apply plugin: 'pmd'
+pmd {
+    toolVersion '6.9.0'
+}
+task pmd(type: Pmd) {
+    ignoreFailures = false
+    ruleSetFiles = files("$project.rootDir/config/pmd.xml")
+    ruleSets = []
+    source 'src/java/java'
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+android {
+    lintOptions {
+        warningsAsErrors true
+        abortOnError true
+        xmlReport false
+        htmlReport true
+        htmlOutput file("$project.buildDir/reports/lint/lint.html")
+        disable 'GoogleAppIndexingWarning', 'MergeRootFrame'
+    }
+}

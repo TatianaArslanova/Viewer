@@ -1,7 +1,5 @@
 package com.example.ama.viewer.presentation.list.mvp;
 
-import android.support.annotation.NonNull;
-
 import com.example.ama.viewer.data.repo.DataRepository;
 import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter;
 import com.example.ama.viewer.presentation.list.mvp.base.MainView;
@@ -14,12 +12,13 @@ public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements
 
     private final static String ON_ERROR_STRING = "";
     private final DataRepository dataRepository;
-    private CompositeDisposable disposable;
+    private final CompositeDisposable disposable;
     private final Scheduler observeOnScheduler;
 
     public MainListPresenterImpl(DataRepository dataRepository, Scheduler observeOnScheduler) {
         this.dataRepository = dataRepository;
         this.observeOnScheduler = observeOnScheduler;
+        disposable = new CompositeDisposable();
     }
 
     @Override
@@ -31,14 +30,6 @@ public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements
                 .subscribe(
                         this::showContent,
                         throwable -> showError(throwable, pullToRefresh))));
-    }
-
-    @Override
-    public void attachView(@NonNull MainView view) {
-        if (disposable == null) {
-            disposable = new CompositeDisposable();
-        }
-        super.attachView(view);
     }
 
     @Override

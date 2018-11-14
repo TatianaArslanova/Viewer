@@ -1,0 +1,10 @@
+<FindBugsFilter>
+  <!-- Do not check auto-generated resources classes -->
+  <Match>
+    <Class name="~.*R\$.*"/>
+  </Match>
+  <!-- Do not check auto-generated manifest classes -->
+  <Match>
+    <Class name="~.*Manifest\$.*"/>
+  </Match>
+</FindBugsFilter>

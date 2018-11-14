@@ -105,7 +105,7 @@ public class MainListFragment
     protected String getErrorMessage(Throwable e, boolean pullToRefresh) {
         if (pullToRefresh) srlLayout.setRefreshing(false);
         String message = e.getMessage();
-        return message != null ? message : getResources().getString(R.string.unknown_error);
+        return message == null ? getResources().getString(R.string.unknown_error) : message;
     }
 
     @Override

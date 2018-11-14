@@ -11,6 +11,8 @@ public class DataRepositoryImpl implements DataRepository {
     private static final int ELEMENTS_TO_TAKE = 5;
     private static final int ERROR_CHANCE = 20;
 
+    private final Random random = new Random();
+
     @Override
     public Observable<String> loadData() {
         return getSomeStringData()
@@ -31,11 +33,11 @@ public class DataRepositoryImpl implements DataRepository {
     }
 
     private String getRandomText() {
-        return TEXT + new Random().nextInt();
+        return TEXT + random.nextInt();
     }
 
     private void tryToSimulateError() {
-        if (new Random().nextInt(100) < ERROR_CHANCE) {
+        if (random.nextInt(100) < ERROR_CHANCE) {
             throw new IllegalStateException("Not found");
         }
     }
