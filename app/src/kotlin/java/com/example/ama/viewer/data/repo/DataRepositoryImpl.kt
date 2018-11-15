@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit
 
 class DataRepositoryImpl : DataRepository {
 
+    private val random = Random()
+
     companion object {
         const val TEXT = "TEXT "
         const val TAKE_ELEMENTS = 5L
@@ -21,9 +23,8 @@ class DataRepositoryImpl : DataRepository {
                     .doOnNext { tryToSimulateError() }
                     .take(TAKE_ELEMENTS)
 
-
     private fun getRandomText(): String {
-        return TEXT + Random().nextInt()
+        return TEXT + random.nextInt()
     }
 
     private fun getSomeStringData() =
@@ -36,7 +37,7 @@ class DataRepositoryImpl : DataRepository {
             Observable.interval(1000, TimeUnit.MILLISECONDS, Schedulers.io())
 
     private fun tryToSimulateError() {
-        if (Random().nextInt(100) < ERROR_CHANCE) {
+        if (random.nextInt(100) < ERROR_CHANCE) {
             throw IllegalStateException("Not found")
         }
     }

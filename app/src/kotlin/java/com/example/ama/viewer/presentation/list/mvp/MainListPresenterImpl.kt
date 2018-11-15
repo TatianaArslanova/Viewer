@@ -8,8 +8,9 @@ import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 
 class MainListPresenterImpl(
-        private val repository: DataRepository,
-        private val observeOnScheduler: Scheduler)
+    private val repository: DataRepository,
+    private val observeOnScheduler: Scheduler
+)
     : MvpBasePresenter<MainView>(), MainPresenter {
 
     companion object {
@@ -25,8 +26,7 @@ class MainListPresenterImpl(
                             .onErrorReturn { ON_ERROR_STRING }
                             .observeOn(observeOnScheduler)
                             .doOnSubscribe { view.showLoading(pullToRefresh) }
-                            .subscribe(this::showContent)
-                            { throwable -> showError(throwable, pullToRefresh) })
+                            .subscribe(this::showContent) { throwable -> showError(throwable, pullToRefresh) })
         }
     }
 

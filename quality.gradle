@@ -48,6 +48,18 @@ task pmd(type: Pmd) {
     }
 }
 
+apply plugin: "org.jlleitschuh.gradle.ktlint"
+ktlint {
+    version = "0.22.0"
+    outputToConsole = true
+    ignoreFailures = false
+
+    filter {
+        exclude("**/generated/**")
+        include("**/kotlin/**")
+    }
+}
+
 android {
     lintOptions {
         warningsAsErrors true
