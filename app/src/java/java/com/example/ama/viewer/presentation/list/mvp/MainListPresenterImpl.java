@@ -1,5 +1,6 @@
 package com.example.ama.viewer.presentation.list.mvp;
 
+import com.example.ama.viewer.data.model.GithubUser;
 import com.example.ama.viewer.data.repo.DataRepository;
 import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter;
 import com.example.ama.viewer.presentation.list.mvp.base.MainView;
@@ -10,7 +11,6 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
 
-    private final static String ON_ERROR_STRING = "";
     private final DataRepository dataRepository;
     private final CompositeDisposable disposable;
     private final Scheduler observeOnScheduler;
@@ -24,7 +24,6 @@ public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements
     @Override
     public void loadData(boolean pullToRefresh) {
         ifViewAttached(view -> disposable.add(dataRepository.loadData()
-                .onErrorReturn(__ -> ON_ERROR_STRING)
                 .observeOn(observeOnScheduler)
                 .doOnSubscribe(__ -> view.showLoading(pullToRefresh))
                 .subscribe(
@@ -38,14 +37,15 @@ public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements
         super.destroy();
     }
 
-    private void showContent(String content) {
+    private void showContent(GithubUser user) {
         ifViewAttached(view -> {
-            view.appendItemToList(content);
+            view.appendItemToList(user.getLogin());
             view.showContent();
         });
     }
 
     private void showError(Throwable throwable, boolean pullToRefresh) {
+        throwable.printStackTrace();
         ifViewAttached(view -> view.showError(throwable, pullToRefresh));
     }
 }
