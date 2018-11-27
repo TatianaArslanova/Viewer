@@ -1,41 +1,57 @@
-package com.example.ama.viewer.presentation.list;
+package com.example.ama.viewer.presentation.profile;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.ama.viewer.R;
+import com.example.ama.viewer.data.model.GithubUser;
 import com.example.ama.viewer.data.repo.DataRepositoryImpl;
-import com.example.ama.viewer.presentation.list.adapter.MainListAdapter;
-import com.example.ama.viewer.presentation.list.mvp.MainListPresenterImpl;
-import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter;
-import com.example.ama.viewer.presentation.list.mvp.base.MainView;
+import com.example.ama.viewer.presentation.profile.mvp.MainListPresenterImpl;
+import com.example.ama.viewer.presentation.profile.mvp.base.MainPresenter;
+import com.example.ama.viewer.presentation.profile.mvp.base.MainView;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.MvpLceViewStateFragment;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState;
 
-import java.util.List;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class MainListFragment
-        extends MvpLceViewStateFragment<RecyclerView, List<String>, MainView, MainPresenter>
+public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUser, MainView, MainPresenter>
         implements MainView {
 
-    private SwipeRefreshLayout srlLayout;
-    private MainListAdapter adapter;
+    private Unbinder unbinder;
 
-    public static MainListFragment newInstance() {
-        return new MainListFragment();
+    @BindView(R.id.srl_layout)
+    SwipeRefreshLayout srlLayout;
+    @BindView(R.id.tv_login)
+    TextView tvLogin;
+    @BindView(R.id.tv_content_name)
+    TextView tvName;
+    @BindView(R.id.tv_content_company)
+    TextView tvCompany;
+    @BindView(R.id.tv_content_location)
+    TextView tvLocation;
+    @BindView(R.id.tv_content_email)
+    TextView tvEmail;
+    @BindView(R.id.tv_content_blog)
+    TextView tvSite;
+    @BindView(R.id.tv_content_bio)
+    TextView tvBio;
+
+    public static ProfileFragment newInstance() {
+        return new ProfileFragment();
     }
 
     @Override
@@ -47,21 +63,20 @@ public class MainListFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initUi(view);
+        unbinder = ButterKnife.bind(this, view);
         setListeners();
     }
 
-    private void initUi(View view) {
-        contentView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new MainListAdapter();
-        contentView.setAdapter(adapter);
-        srlLayout = view.findViewById(R.id.srl_layout);
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     private void setListeners() {
@@ -83,8 +98,8 @@ public class MainListFragment
     }
 
     @Override
-    public List<String> getData() {
-        return adapter.getItems();
+    public GithubUser getData() {
+        return new GithubUser();
     }
 
     @NonNull
@@ -97,7 +112,7 @@ public class MainListFragment
 
     @NonNull
     @Override
-    public LceViewState<List<String>, MainView> createViewState() {
+    public LceViewState<GithubUser, MainView> createViewState() {
         return new RetainingLceViewState<>();
     }
 
@@ -120,8 +135,14 @@ public class MainListFragment
     }
 
     @Override
-    public void setData(List<String> data) {
-        adapter.setItems(data);
+    public void setData(GithubUser data) {
+        tvLogin.setText(data.getLogin());
+        tvName.setText(data.getName());
+        tvCompany.setText(data.getCompany());
+        tvLocation.setText(data.getLocation());
+        tvEmail.setText(data.getEmail());
+        tvSite.setText(data.getBlog());
+        tvBio.setText(data.getBio());
     }
 
     @Override
@@ -144,10 +165,5 @@ public class MainListFragment
     protected void animateLoadingViewIn() {
         super.animateLoadingViewIn();
         srlLayout.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void appendItemToList(String item) {
-        adapter.appendItem(item);
     }
 }

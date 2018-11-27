@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.ama.viewer.R;
-import com.example.ama.viewer.presentation.list.MainListFragment;
+import com.example.ama.viewer.presentation.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fl_container, MainListFragment.newInstance())
+                    .replace(R.id.fl_container, ProfileFragment.newInstance())
                     .commit();
         }
     }

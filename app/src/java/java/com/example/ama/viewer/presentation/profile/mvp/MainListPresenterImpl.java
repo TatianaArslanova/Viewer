@@ -1,9 +1,9 @@
-package com.example.ama.viewer.presentation.list.mvp;
+package com.example.ama.viewer.presentation.profile.mvp;
 
 import com.example.ama.viewer.data.model.GithubUser;
 import com.example.ama.viewer.data.repo.DataRepository;
-import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter;
-import com.example.ama.viewer.presentation.list.mvp.base.MainView;
+import com.example.ama.viewer.presentation.profile.mvp.base.MainPresenter;
+import com.example.ama.viewer.presentation.profile.mvp.base.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 
 import io.reactivex.Scheduler;
@@ -39,7 +39,7 @@ public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements
 
     private void showContent(GithubUser user) {
         ifViewAttached(view -> {
-            view.appendItemToList(user.getLogin());
+            view.setData(user);
             view.showContent();
         });
     }

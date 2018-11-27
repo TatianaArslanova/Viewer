@@ -41,6 +41,7 @@ ext {
     rxJavaAndroidVer = "2.0.2"
     rxJavaVer = "2.1.8"
     retrofitVer = "2.4.0"
+    butterKnifeVer ="9.0.0-rc2"
 }
 
 dependencies {
@@ -66,6 +67,9 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofitVer"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVer"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVer"
+
+    implementation "com.jakewharton:butterknife:$butterKnifeVer"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVer"
 }
 repositories {
     mavenCentral()

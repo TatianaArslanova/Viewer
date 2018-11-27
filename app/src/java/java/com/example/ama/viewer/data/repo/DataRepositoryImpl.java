@@ -8,7 +8,7 @@ import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
 public class DataRepositoryImpl implements DataRepository {
-    private final static String USERNAME = "TatianaArslanova";
+    private final static String USERNAME = "JakeWharton";
     private GithubApi githubApi = ViewerApp.getInstance().getGithubApi();
 
     @Override
