@@ -41,12 +41,15 @@ ext {
     rxJavaAndroidVer = "2.0.2"
     rxJavaVer = "2.1.8"
     retrofitVer = "2.4.0"
-    butterKnifeVer ="9.0.0-rc2"
+    butterKnifeVer = "9.0.0-rc2"
+    picassoVer = "2.71828"
+    stethoVer = "1.5.0"
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:appcompat-v7:$supportVer"
+    implementation "com.android.support:exifinterface:$supportVer"
     implementation "com.android.support:support-v4:$supportVer"
     implementation "com.android.support:support-media-compat:$supportVer"
     implementation "com.android.support:recyclerview-v7:$supportVer"
@@ -71,7 +74,9 @@ dependencies {
     implementation "com.jakewharton:butterknife:$butterKnifeVer"
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVer"
 
-    implementation "com.facebook.stetho:stetho-okhttp3:1.5.0"
+    implementation "com.facebook.stetho:stetho-okhttp3:$stethoVer"
+
+    implementation "com.squareup.picasso:picasso:$picassoVer"
 }
 repositories {
     mavenCentral()

@@ -11,9 +11,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ama.viewer.R;
+import com.example.ama.viewer.ViewerApp;
+import com.example.ama.viewer.data.loader.ImageLoader;
+import com.example.ama.viewer.data.loader.PicassoImageLoader;
 import com.example.ama.viewer.data.model.GithubUser;
 import com.example.ama.viewer.data.repo.DataRepositoryImpl;
 import com.example.ama.viewer.presentation.profile.mvp.MainListPresenterImpl;
@@ -22,6 +26,7 @@ import com.example.ama.viewer.presentation.profile.mvp.base.MainView;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.MvpLceViewStateFragment;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +37,10 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
         implements MainView {
 
     private Unbinder unbinder;
+    private ImageLoader<ImageView> imageLoader;
 
+    @BindView(R.id.iv_avatar)
+    ImageView ivAvatar;
     @BindView(R.id.srl_layout)
     SwipeRefreshLayout srlLayout;
     @BindView(R.id.tv_login)
@@ -58,6 +66,7 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        imageLoader = new PicassoImageLoader(new Picasso.Builder(ViewerApp.getInstance()).build());
     }
 
     @Nullable
@@ -136,6 +145,7 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
 
     @Override
     public void setData(GithubUser data) {
+        imageLoader.loadImage(data.getAvatar(), ivAvatar);
         tvLogin.setText(data.getLogin());
         tvName.setText(data.getName());
         tvCompany.setText(data.getCompany());
