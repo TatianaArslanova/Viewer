@@ -1,5 +1,6 @@
 package com.example.ama.viewer.presentation.list.mvp
 
+import com.example.ama.viewer.data.model.GithubUser
 import com.example.ama.viewer.data.repo.DataRepository
 import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter
 import com.example.ama.viewer.presentation.list.mvp.base.MainView
@@ -8,14 +9,9 @@ import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 
 class MainListPresenterImpl(
-    private val repository: DataRepository,
-    private val observeOnScheduler: Scheduler
-)
-    : MvpBasePresenter<MainView>(), MainPresenter {
-
-    companion object {
-        const val ON_ERROR_STRING = ""
-    }
+        private val repository: DataRepository,
+        private val observeOnScheduler: Scheduler
+) : MvpBasePresenter<MainView>(), MainPresenter {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -23,7 +19,6 @@ class MainListPresenterImpl(
         ifViewAttached { view ->
             compositeDisposable.add(
                     repository.loadData()
-                            .onErrorReturn { ON_ERROR_STRING }
                             .observeOn(observeOnScheduler)
                             .doOnSubscribe { view.showLoading(pullToRefresh) }
                             .subscribe(this::showContent) { throwable -> showError(throwable, pullToRefresh) })
@@ -35,9 +30,9 @@ class MainListPresenterImpl(
         super.destroy()
     }
 
-    private fun showContent(content: String) {
+    private fun showContent(user: GithubUser) {
         ifViewAttached { view ->
-            view.appendItemToList(content)
+            view.setData(user)
             view.showContent()
         }
     }
