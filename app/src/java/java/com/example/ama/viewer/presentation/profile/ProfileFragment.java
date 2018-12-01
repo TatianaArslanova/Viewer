@@ -145,7 +145,9 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
 
     @Override
     public void setData(GithubUser data) {
-        imageLoader.loadImage(data.getAvatar(), ivAvatar);
+        if (data.getAvatar() != null) {
+            imageLoader.loadImage(data.getAvatar(), ivAvatar);
+        }
         tvLogin.setText(data.getLogin());
         tvName.setText(data.getName());
         tvCompany.setText(data.getCompany());
