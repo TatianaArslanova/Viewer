@@ -36,6 +36,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUser, MainView, MainPresenter>
         implements MainView {
 
+    private GithubUser githubUser;
     private Unbinder unbinder;
     private ImageLoader<ImageView> imageLoader;
 
@@ -108,7 +109,7 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
 
     @Override
     public GithubUser getData() {
-        return new GithubUser();
+        return githubUser;
     }
 
     @NonNull
@@ -145,6 +146,7 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
 
     @Override
     public void setData(GithubUser data) {
+        this.githubUser = data;
         if (data.getAvatar() != null) {
             imageLoader.loadImage(data.getAvatar(), ivAvatar);
         }
