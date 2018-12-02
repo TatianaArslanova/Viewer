@@ -116,7 +116,8 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
     @Override
     public MainPresenter createPresenter() {
         return new MainListPresenterImpl(
-                new DataRepositoryImpl(),
+                new DataRepositoryImpl(
+                        ViewerApp.getInstance().getGithubApi()),
                 AndroidSchedulers.mainThread());
     }
 
