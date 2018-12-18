@@ -2,7 +2,6 @@ package com.example.ama.viewer.presentation.profile.mvp
 
 import android.util.Log
 import com.example.ama.viewer.data.api.dto.GithubUserDTO
-import com.example.ama.viewer.data.entity.GithubUser
 import com.example.ama.viewer.data.repo.ApiRepository
 import com.example.ama.viewer.data.repo.DBRepository
 import com.example.ama.viewer.presentation.profile.mvp.base.MainPresenter
@@ -35,7 +34,6 @@ class ProfilePresenterImpl(
     }
 
     private fun getFromGb() = dbRepositpry.getUserFromDb()
-            .map { user -> GithubUserDTO(user) }
             .observeOn(observeOnScheduler)
 
     private fun getFromApi() = apiRepository.loadData()
@@ -50,7 +48,7 @@ class ProfilePresenterImpl(
 
     private fun saveToDb(user: GithubUserDTO) {
         compositeDisposable.add(
-                dbRepositpry.saveUserToDb(GithubUser(user))
+                dbRepositpry.saveUserToDb(user)
                         .observeOn(observeOnScheduler)
                         .subscribe(
                                 { Log.d("USER SAVED TO DB", user.login) },

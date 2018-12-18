@@ -1,6 +1,6 @@
 package com.example.ama.viewer.data.repo
 
-import android.util.Log
+import com.example.ama.viewer.data.api.dto.GithubUserDTO
 import com.example.ama.viewer.data.entity.GithubUser
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -14,14 +14,15 @@ class DBRepositoryImpl(
 
     var realm: Realm? = null
 
-    override fun getUserFromDb(): Observable<GithubUser> =
+    override fun getUserFromDb(): Observable<GithubUserDTO> =
             Observable.defer { Observable.fromCallable<GithubUser> { realm?.where(GithubUser::class.java)?.findFirst() } }
                     .doOnSubscribe { tryToOpenRealm() }
                     .doFinally { this.tryToCloseRealm() }
+                    .map { user -> GithubUserDTO(user) }
                     .subscribeOn(Schedulers.io())
 
-    override fun saveUserToDb(user: GithubUser): Completable =
-            Completable.fromAction { save(user) }
+    override fun saveUserToDb(user: GithubUserDTO): Completable =
+            Completable.fromAction { save(GithubUser(user)) }
                     .doOnSubscribe { tryToOpenRealm() }
                     .doFinally { this.tryToCloseRealm() }
                     .subscribeOn(Schedulers.io())
