@@ -1,30 +1,38 @@
 package com.example.ama.viewer.presentation.profile.mvp;
 
-import com.example.ama.viewer.data.model.GithubUser;
-import com.example.ama.viewer.data.repo.DataRepository;
+import android.util.Log;
+
+import com.example.ama.viewer.data.entity.GithubUser;
+import com.example.ama.viewer.data.api.dto.GithubUserDTO;
+import com.example.ama.viewer.data.repo.ApiRepository;
+import com.example.ama.viewer.data.repo.DBRepository;
 import com.example.ama.viewer.presentation.profile.mvp.base.MainPresenter;
 import com.example.ama.viewer.presentation.profile.mvp.base.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 
+import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
 
-    private final DataRepository dataRepository;
+    private final ApiRepository apiRepository;
+    private final DBRepository dbRepository;
     private final CompositeDisposable disposable;
     private final Scheduler observeOnScheduler;
 
-    public MainListPresenterImpl(DataRepository dataRepository, Scheduler observeOnScheduler) {
-        this.dataRepository = dataRepository;
+    public MainListPresenterImpl(ApiRepository apiRepository, DBRepository dbRepository, Scheduler observeOnScheduler) {
+        this.apiRepository = apiRepository;
+        this.dbRepository = dbRepository;
         this.observeOnScheduler = observeOnScheduler;
         disposable = new CompositeDisposable();
     }
 
     @Override
     public void loadData(boolean pullToRefresh) {
-        ifViewAttached(view -> disposable.add(dataRepository.loadData()
-                .observeOn(observeOnScheduler)
+        ifViewAttached(view -> disposable.add(getFromApi()
+                .doOnNext(this::saveToDb)
+                .onErrorResumeNext(getFromDb())
                 .doOnSubscribe(__ -> view.showLoading(pullToRefresh))
                 .subscribe(
                         this::showContent,
@@ -37,7 +45,28 @@ public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements
         super.destroy();
     }
 
-    private void showContent(GithubUser user) {
+    private Observable<GithubUserDTO> getFromDb() {
+        return dbRepository.getUserFromDb()
+                .map(GithubUserDTO::new)
+                .observeOn(observeOnScheduler);
+    }
+
+    private Observable<GithubUserDTO> getFromApi() {
+        return apiRepository.loadData()
+                .observeOn(observeOnScheduler);
+    }
+
+    private void saveToDb(GithubUserDTO userDTO) {
+        disposable.add(
+                dbRepository.saveUserToDb(new GithubUser(userDTO))
+                        .observeOn(observeOnScheduler)
+                        .subscribe(
+                                () -> Log.d("USER SAVED TO DB", userDTO.getLogin()),
+                                throwable -> Log.d("USER NOT SAVED TO DB", userDTO.getLogin()))
+        );
+    }
+
+    private void showContent(GithubUserDTO user) {
         ifViewAttached(view -> {
             view.setData(user);
             view.showContent();

@@ -1,10 +1,11 @@
-package com.example.ama.viewer.data.model;
+package com.example.ama.viewer.data.api.dto;
 
 import android.support.annotation.Nullable;
 
+import com.example.ama.viewer.data.entity.GithubUser;
 import com.google.gson.annotations.SerializedName;
 
-public class GithubUser {
+public class GithubUserDTO {
     private final static String NOT_SPECIFIED = "not specified";
 
     private String login;
@@ -19,6 +20,17 @@ public class GithubUser {
     private String location;
     private String email;
     private String bio;
+
+    public GithubUserDTO(GithubUser user) {
+        login = user.getLogin();
+        avatar = user.getAvatar();
+        name = user.getName();
+        company = user.getCompany();
+        blog = user.getBlog();
+        location = user.getLocation();
+        email = user.getEmail();
+        bio = user.getBio();
+    }
 
     public String getLogin() {
         return login == null ? NOT_SPECIFIED : login;

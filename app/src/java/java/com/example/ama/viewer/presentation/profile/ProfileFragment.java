@@ -18,8 +18,9 @@ import com.example.ama.viewer.R;
 import com.example.ama.viewer.ViewerApp;
 import com.example.ama.viewer.data.loader.ImageLoader;
 import com.example.ama.viewer.data.loader.PicassoImageLoader;
-import com.example.ama.viewer.data.model.GithubUser;
-import com.example.ama.viewer.data.repo.DataRepositoryImpl;
+import com.example.ama.viewer.data.api.dto.GithubUserDTO;
+import com.example.ama.viewer.data.repo.ApiRepositoryImpl;
+import com.example.ama.viewer.data.repo.DBRepositoryImpl;
 import com.example.ama.viewer.presentation.profile.mvp.MainListPresenterImpl;
 import com.example.ama.viewer.presentation.profile.mvp.base.MainPresenter;
 import com.example.ama.viewer.presentation.profile.mvp.base.MainView;
@@ -32,11 +33,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.realm.RealmConfiguration;
 
-public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUser, MainView, MainPresenter>
+public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUserDTO, MainView, MainPresenter>
         implements MainView {
 
-    private GithubUser githubUser;
+    private GithubUserDTO githubUserDTO;
     private Unbinder unbinder;
     private ImageLoader<ImageView> imageLoader;
 
@@ -108,22 +110,23 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
     }
 
     @Override
-    public GithubUser getData() {
-        return githubUser;
+    public GithubUserDTO getData() {
+        return githubUserDTO;
     }
 
     @NonNull
     @Override
     public MainPresenter createPresenter() {
         return new MainListPresenterImpl(
-                new DataRepositoryImpl(
+                new ApiRepositoryImpl(
                         ViewerApp.getInstance().getGithubApi()),
+                new DBRepositoryImpl(new RealmConfiguration.Builder().build()),
                 AndroidSchedulers.mainThread());
     }
 
     @NonNull
     @Override
-    public LceViewState<GithubUser, MainView> createViewState() {
+    public LceViewState<GithubUserDTO, MainView> createViewState() {
         return new RetainingLceViewState<>();
     }
 
@@ -146,8 +149,8 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
     }
 
     @Override
-    public void setData(GithubUser data) {
-        this.githubUser = data;
+    public void setData(GithubUserDTO data) {
+        this.githubUserDTO = data;
         if (data.getAvatar() != null) {
             imageLoader.loadImage(data.getAvatar(), ivAvatar);
         }

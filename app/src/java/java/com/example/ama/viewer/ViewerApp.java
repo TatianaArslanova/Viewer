@@ -9,6 +9,7 @@ import com.example.ama.viewer.data.interceptor.RequestHeadersInterceptor;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
+import io.realm.Realm;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -25,6 +26,7 @@ public class ViewerApp extends Application {
         instance = this;
         initStetho();
         initApi();
+        initRealm();
     }
 
     private void initStetho() {
@@ -58,6 +60,10 @@ public class ViewerApp extends Application {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void initRealm() {
+        Realm.init(this);
     }
 
     public static ViewerApp getInstance() {
