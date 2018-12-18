@@ -2,7 +2,6 @@ package com.example.ama.viewer.presentation.profile.mvp;
 
 import android.util.Log;
 
-import com.example.ama.viewer.data.entity.GithubUser;
 import com.example.ama.viewer.data.api.dto.GithubUserDTO;
 import com.example.ama.viewer.data.repo.ApiRepository;
 import com.example.ama.viewer.data.repo.DBRepository;
@@ -47,7 +46,6 @@ public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements
 
     private Observable<GithubUserDTO> getFromDb() {
         return dbRepository.getUserFromDb()
-                .map(GithubUserDTO::new)
                 .observeOn(observeOnScheduler);
     }
 
@@ -58,7 +56,7 @@ public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements
 
     private void saveToDb(GithubUserDTO userDTO) {
         disposable.add(
-                dbRepository.saveUserToDb(new GithubUser(userDTO))
+                dbRepository.saveUserToDb(userDTO)
                         .observeOn(observeOnScheduler)
                         .subscribe(
                                 () -> Log.d("USER SAVED TO DB", userDTO.getLogin()),

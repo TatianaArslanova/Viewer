@@ -1,13 +1,13 @@
 package com.example.ama.viewer.data.repo;
 
-import com.example.ama.viewer.data.entity.GithubUser;
+import com.example.ama.viewer.data.api.dto.GithubUserDTO;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 
 public interface DBRepository {
 
-    Observable<GithubUser> getUserFromDb();
+    Observable<GithubUserDTO> getUserFromDb();
 
-    Completable saveUserToDb(GithubUser user);
+    Completable saveUserToDb(GithubUserDTO user);
 }
