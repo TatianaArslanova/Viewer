@@ -7,7 +7,7 @@ import io.reactivex.Observable;
 
 public interface DBRepository {
 
-    Observable<GithubUserDTO> getUserFromDb();
+    Observable<GithubUserDTO> getUserFromDb(String login);
 
     Completable saveUserToDb(GithubUserDTO user);
 }

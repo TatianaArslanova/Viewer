@@ -16,6 +16,8 @@ import io.reactivex.disposables.Disposable;
 
 public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
 
+    private final static String LOGIN = "JakeWharton";
+
     private final ApiRepository apiRepository;
     private final DBRepository dbRepository;
     private final Scheduler observeOnScheduler;
@@ -53,11 +55,11 @@ public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements 
     }
 
     private Observable<GithubUserDTO> getFromDb() {
-        return dbRepository.getUserFromDb();
+        return dbRepository.getUserFromDb(LOGIN);
     }
 
     private Observable<GithubUserDTO> getFromApi() {
-        return apiRepository.loadData();
+        return apiRepository.loadData(LOGIN);
     }
 
     private void saveToDb(GithubUserDTO userDTO) {

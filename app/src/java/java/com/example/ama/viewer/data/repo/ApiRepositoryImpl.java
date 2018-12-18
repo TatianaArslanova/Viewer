@@ -7,7 +7,6 @@ import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
 public class ApiRepositoryImpl implements ApiRepository {
-    private final static String USERNAME = "JakeWharton";
     private GithubApi githubApi;
 
     public ApiRepositoryImpl(GithubApi githubApi) {
@@ -15,8 +14,8 @@ public class ApiRepositoryImpl implements ApiRepository {
     }
 
     @Override
-    public Observable<GithubUserDTO> loadData() {
-        return githubApi.getUserByUsername(USERNAME)
+    public Observable<GithubUserDTO> loadData(String login) {
+        return githubApi.getUserByUsername(login)
                 .subscribeOn(Schedulers.io());
     }
 }

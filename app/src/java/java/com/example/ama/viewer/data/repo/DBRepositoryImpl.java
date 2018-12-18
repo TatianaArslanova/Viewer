@@ -11,6 +11,7 @@ import io.realm.RealmConfiguration;
 
 public class DBRepositoryImpl implements DBRepository {
 
+    private final static String PRIMARY_KEY = "login";
     private RealmConfiguration configuration;
     private Realm realm;
 
@@ -19,8 +20,10 @@ public class DBRepositoryImpl implements DBRepository {
     }
 
     @Override
-    public Observable<GithubUserDTO> getUserFromDb() {
-        return Observable.defer(() -> Observable.fromCallable(() -> realm.where(GithubUser.class).findFirst()))
+    public Observable<GithubUserDTO> getUserFromDb(String login) {
+        return Observable.defer(() -> Observable.fromCallable(() ->
+                realm.where(GithubUser.class).equalTo(PRIMARY_KEY, login).findFirst()))
+
                 .doOnSubscribe(disposable -> tryToOpenRealm())
                 .doFinally(this::tryToCloseRealm)
                 .map(GithubUserDTO::new)
