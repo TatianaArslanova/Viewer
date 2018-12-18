@@ -9,22 +9,28 @@ import com.example.ama.viewer.presentation.profile.mvp.base.MainView
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
 class ProfilePresenterImpl(
         private val apiRepository: ApiRepository,
-        private val dbRepositpry: DBRepository,
+        private val dbRepository: DBRepository,
         private val observeOnScheduler: Scheduler
 ) : MvpBasePresenter<MainView>(), MainPresenter {
 
     private val compositeDisposable = CompositeDisposable()
+    private var loadDisposable: Disposable? = null
 
     override fun loadData(pullToRefresh: Boolean) {
-        ifViewAttached { view ->
-            compositeDisposable.add(getFromApi()
-                    .doOnNext { user -> saveToDb(user) }
-                    .onErrorResumeNext(getFromGb())
-                    .doOnSubscribe { view.showLoading(pullToRefresh) }
-                    .subscribe(this::showContent) { throwable -> showError(throwable, pullToRefresh) })
+        if (loadDisposable?.isDisposed == true) {
+            ifViewAttached { view ->
+                loadDisposable = getFromApi()
+                        .doOnNext { user -> saveToDb(user) }
+                        .onErrorResumeNext(getFromGb())
+                        .doOnSubscribe { view.showLoading(pullToRefresh) }
+                        .observeOn(observeOnScheduler)
+                        .subscribe(this::showContent) { throwable -> showError(throwable, pullToRefresh) }
+                compositeDisposable.add(loadDisposable!!)
+            }
         }
     }
 
@@ -33,11 +39,9 @@ class ProfilePresenterImpl(
         super.destroy()
     }
 
-    private fun getFromGb() = dbRepositpry.getUserFromDb()
-            .observeOn(observeOnScheduler)
+    private fun getFromGb() = dbRepository.getUserFromDb()
 
     private fun getFromApi() = apiRepository.loadData()
-            .observeOn(observeOnScheduler)
 
     private fun showContent(userDTO: GithubUserDTO) {
         ifViewAttached { view ->
@@ -48,7 +52,7 @@ class ProfilePresenterImpl(
 
     private fun saveToDb(user: GithubUserDTO) {
         compositeDisposable.add(
-                dbRepositpry.saveUserToDb(user)
+                dbRepository.saveUserToDb(user)
                         .observeOn(observeOnScheduler)
                         .subscribe(
                                 { Log.d("USER SAVED TO DB", user.login) },
