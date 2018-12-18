@@ -5,6 +5,7 @@ import com.example.ama.viewer.data.api.GithubApi
 import com.example.ama.viewer.data.interceptor.RequestHeadersInterceptor
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import io.realm.Realm
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -25,6 +26,7 @@ class ViewerApp : Application() {
         instance = this
         initApi()
         initStetho()
+        initRealm()
     }
 
     private fun initApi() {
@@ -52,4 +54,8 @@ class ViewerApp : Application() {
 
     private fun getPackageInfo() =
             packageManager.getPackageInfo(packageName, 0)
+
+    private fun initRealm() {
+        Realm.init(this)
+    }
 }

@@ -1,8 +1,9 @@
-package com.example.ama.viewer.data.model
+package com.example.ama.viewer.data.api.dto
 
+import com.example.ama.viewer.data.entity.GithubUser
 import com.google.gson.annotations.SerializedName
 
-data class GithubUser(
+data class GithubUserDTO(
         @SerializedName("avatar_url")
         val avatar: String?,
 
@@ -26,6 +27,16 @@ data class GithubUser(
 
         @SerializedName("bio")
         private val _bio: String?) {
+
+    constructor(user: GithubUser) : this(
+            user.login,
+            user.avatar,
+            user.name,
+            user.company,
+            user.blog,
+            user.location,
+            user.email,
+            user.bio)
 
     val login: String
         get() = _login ?: NOT_SPECIFIED

@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply from: '../quality.gradle'
 apply plugin: 'realm-android'
 
@@ -73,13 +74,13 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVer"
 
     implementation "com.jakewharton:butterknife:$butterKnifeVer"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVer"
+    kapt "com.jakewharton:butterknife-compiler:$butterKnifeVer"
 
     implementation "com.facebook.stetho:stetho-okhttp3:$stethoVer"
 
     implementation "com.squareup.picasso:picasso:$picassoVer"
 
-    annotationProcessor "io.realm:realm-annotations-processor:5.8.0"
+    kapt "io.realm:realm-annotations-processor:5.8.0"
 }
 repositories {
     mavenCentral()

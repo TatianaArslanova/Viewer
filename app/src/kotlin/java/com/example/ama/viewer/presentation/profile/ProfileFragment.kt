@@ -1,4 +1,4 @@
-package com.example.ama.viewer.presentation.list
+package com.example.ama.viewer.presentation.profile
 
 import android.os.Bundle
 import android.support.v7.widget.CardView
@@ -6,29 +6,31 @@ import android.view.*
 import android.widget.ImageView
 import com.example.ama.viewer.R
 import com.example.ama.viewer.ViewerApp
+import com.example.ama.viewer.data.api.dto.GithubUserDTO
 import com.example.ama.viewer.data.loader.ImageLoader
 import com.example.ama.viewer.data.loader.PicassoImageLoader
-import com.example.ama.viewer.data.model.GithubUser
-import com.example.ama.viewer.data.repo.DataRepositoryImpl
-import com.example.ama.viewer.presentation.list.mvp.MainListPresenterImpl
-import com.example.ama.viewer.presentation.list.mvp.base.MainPresenter
-import com.example.ama.viewer.presentation.list.mvp.base.MainView
+import com.example.ama.viewer.data.repo.ApiRepositoryImpl
+import com.example.ama.viewer.data.repo.DBRepositoryImpl
+import com.example.ama.viewer.presentation.profile.mvp.ProfilePresenterImpl
+import com.example.ama.viewer.presentation.profile.mvp.base.MainPresenter
+import com.example.ama.viewer.presentation.profile.mvp.base.MainView
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.MvpLceViewStateFragment
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState
 import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.content_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 
-class MainListFragment : MvpLceViewStateFragment<CardView, GithubUser, MainView, MainPresenter>(), MainView {
+class ProfileFragment : MvpLceViewStateFragment<CardView, GithubUserDTO, MainView, MainPresenter>(), MainView {
 
-    private var githubUser: GithubUser? = null
+    private var githubUserDTO: GithubUserDTO? = null
     private val imageLoader: ImageLoader<ImageView> = PicassoImageLoader(
             Picasso.Builder(ViewerApp.instance).build())
 
     companion object {
-        fun newInstance() = MainListFragment()
+        fun newInstance() = ProfileFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,15 +64,16 @@ class MainListFragment : MvpLceViewStateFragment<CardView, GithubUser, MainView,
     }
 
     override fun createPresenter(): MainPresenter =
-            MainListPresenterImpl(
-                    DataRepositoryImpl(ViewerApp.instance.githubApi),
+            ProfilePresenterImpl(
+                    ApiRepositoryImpl(ViewerApp.instance.githubApi),
+                    DBRepositoryImpl(RealmConfiguration.Builder().build()),
                     AndroidSchedulers.mainThread())
 
-    override fun createViewState(): LceViewState<GithubUser, MainView> =
-            RetainingLceViewState<GithubUser, MainView>()
+    override fun createViewState(): LceViewState<GithubUserDTO, MainView> =
+            RetainingLceViewState<GithubUserDTO, MainView>()
 
-    override fun setData(data: GithubUser) {
-        this.githubUser = data
+    override fun setData(data: GithubUserDTO) {
+        this.githubUserDTO = data
         if (data.avatar != null) {
             imageLoader.loadImage(data.avatar, iv_avatar)
         }
@@ -83,7 +86,7 @@ class MainListFragment : MvpLceViewStateFragment<CardView, GithubUser, MainView,
         tv_content_bio.text = data.bio
     }
 
-    override fun getData() = githubUser
+    override fun getData() = githubUserDTO
 
     override fun getErrorMessage(e: Throwable?, pullToRefresh: Boolean): String {
         if (pullToRefresh) srl_layout.isRefreshing = false
