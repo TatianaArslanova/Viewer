@@ -2,17 +2,23 @@ package com.example.ama.viewer.presentation.profile.mvp;
 
 import android.util.Log;
 
+import com.example.ama.viewer.R;
 import com.example.ama.viewer.data.api.dto.GithubUserDTO;
 import com.example.ama.viewer.data.repo.ApiRepository;
 import com.example.ama.viewer.data.repo.DBRepository;
 import com.example.ama.viewer.presentation.profile.mvp.base.MainPresenter;
 import com.example.ama.viewer.presentation.profile.mvp.base.MainView;
+import com.example.ama.viewer.utils.ResUtils;
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
+
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import retrofit2.HttpException;
 
 public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
 
@@ -35,17 +41,45 @@ public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements 
     public void loadData(boolean pullToRefresh) {
         if (loadDisposable == null || loadDisposable.isDisposed()) {
             ifViewAttached(view -> {
-                loadDisposable = getFromApi()
-                        .doOnNext(this::saveToDb)
-                        .onErrorResumeNext(getFromDb())
+                Observable<GithubUserDTO> observable;
+                if (loadDisposable == null && !view.hasLoadedData()) {
+                    observable = loadUser();
+                } else {
+                    observable = updateUser();
+                }
+                loadDisposable = observable
                         .doOnSubscribe(__ -> view.showLoading(pullToRefresh))
                         .observeOn(observeOnScheduler)
                         .subscribe(
                                 this::showContent,
-                                throwable -> showError(throwable, pullToRefresh));
+                                throwable -> showError(handleError(throwable), pullToRefresh));
                 compositeDisposable.add(loadDisposable);
             });
         }
+    }
+
+    private Observable<GithubUserDTO> loadUser() {
+        return getFromDb()
+                .onErrorResumeNext(getFromApi());
+    }
+
+    private Observable<GithubUserDTO> updateUser() {
+        return getFromApi()
+                .observeOn(observeOnScheduler)
+                .doOnError(throwable -> showLighError(handleError(throwable)))
+                .onErrorResumeNext(getFromDb());
+    }
+
+    private Throwable handleError(Throwable throwable) {
+        if (throwable instanceof NullPointerException) {
+            return new Throwable(ResUtils.getString(R.string.no_saved_data_error));
+        } else if (throwable instanceof HttpException) {
+            return new Throwable(ResUtils.getString(R.string.server_error_message));
+        } else if (throwable instanceof SocketTimeoutException) {
+            return new Throwable(ResUtils.getString(R.string.timeout_error_message));
+        } else if (throwable instanceof UnknownHostException) {
+            return new Throwable(ResUtils.getString(R.string.check_connection_error_message));
+        } else return new Throwable(ResUtils.getString(R.string.unknown_error));
     }
 
     @Override
@@ -59,7 +93,8 @@ public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements 
     }
 
     private Observable<GithubUserDTO> getFromApi() {
-        return apiRepository.loadData(LOGIN);
+        return apiRepository.loadData(LOGIN)
+                .doOnNext(this::saveToDb);
     }
 
     private void saveToDb(GithubUserDTO userDTO) {
@@ -84,8 +119,12 @@ public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements 
             if (view.hasLoadedData()) {
                 view.showError(throwable, pullToRefresh);
             } else {
-                view.showError(throwable, false);
+                view.showToastError(throwable.getMessage());
             }
         });
+    }
+
+    private void showLighError(Throwable throwable) {
+        ifViewAttached(view -> view.showToastError(throwable.getMessage()));
     }
 }

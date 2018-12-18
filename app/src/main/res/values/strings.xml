@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Viewer</string>
     <string name="unknown_error">unknown error</string>
+    <string name="no_saved_data_error">No saved data. Please, check your connection</string>
+    <string name="timeout_error_message">Timeout exceeded</string>
+    <string name="server_error_message">Server error. Try again later</string>
+    <string name="check_connection_error_message">Check network connection</string>
     <string name="main_menu_menu_item_refresh">Обновить</string>
     <string name="profile_fragment_tv_biography">biography</string>
     <string name="profile_fragment_tv_site">site</string>

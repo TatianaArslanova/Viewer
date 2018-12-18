@@ -5,4 +5,6 @@ import com.hannesdorfmann.mosby3.mvp.lce.MvpLceView;
 
 public interface MainView extends MvpLceView<GithubUserDTO> {
     boolean hasLoadedData();
+
+    void showToastError(String message);
 }

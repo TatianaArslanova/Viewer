@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ama.viewer.R;
 import com.example.ama.viewer.ViewerApp;
@@ -188,5 +189,10 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
     @Override
     public boolean hasLoadedData() {
         return githubUserDTO != null;
+    }
+
+    @Override
+    public void showToastError(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 }
