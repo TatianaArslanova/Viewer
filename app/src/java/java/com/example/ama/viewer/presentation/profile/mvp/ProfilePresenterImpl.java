@@ -80,7 +80,12 @@ public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements 
     }
 
     private void showError(Throwable throwable, boolean pullToRefresh) {
-        throwable.printStackTrace();
-        ifViewAttached(view -> view.showError(throwable, pullToRefresh));
+        ifViewAttached(view -> {
+            if (view.hasLoadedData()) {
+                view.showError(throwable, pullToRefresh);
+            } else {
+                view.showError(throwable, false);
+            }
+        });
     }
 }

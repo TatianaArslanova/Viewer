@@ -16,9 +16,9 @@ import android.widget.TextView;
 
 import com.example.ama.viewer.R;
 import com.example.ama.viewer.ViewerApp;
+import com.example.ama.viewer.data.api.dto.GithubUserDTO;
 import com.example.ama.viewer.data.loader.ImageLoader;
 import com.example.ama.viewer.data.loader.PicassoImageLoader;
-import com.example.ama.viewer.data.api.dto.GithubUserDTO;
 import com.example.ama.viewer.data.repo.ApiRepositoryImpl;
 import com.example.ama.viewer.data.repo.DBRepositoryImpl;
 import com.example.ama.viewer.presentation.profile.mvp.ProfilePresenterImpl;
@@ -132,7 +132,7 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
 
     @Override
     protected String getErrorMessage(Throwable e, boolean pullToRefresh) {
-        if (pullToRefresh) srlLayout.setRefreshing(false);
+        if (srlLayout.isRefreshing()) srlLayout.setRefreshing(false);
         String message = e.getMessage();
         return message == null ? getResources().getString(R.string.unknown_error) : message;
     }
@@ -183,5 +183,10 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
     protected void animateLoadingViewIn() {
         super.animateLoadingViewIn();
         srlLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean hasLoadedData() {
+        return githubUserDTO != null;
     }
 }
