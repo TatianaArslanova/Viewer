@@ -19,10 +19,8 @@ class DBRepositoryImpl(
     var realm: Realm? = null
 
     override fun getUserFromDb(login: String): Observable<GithubUserDTO> =
-            Observable.defer {
-                Observable.fromCallable<GithubUser>
-                { realm?.where(GithubUser::class.java)?.equalTo(PRIMARY_KEY, login)?.findFirst() }
-            }
+            Observable.fromCallable<GithubUser>
+            { realm?.where(GithubUser::class.java)?.equalTo(PRIMARY_KEY, login)?.findFirst() }
                     .doOnSubscribe { tryToOpenRealm() }
                     .doFinally { this.tryToCloseRealm() }
                     .map { user -> GithubUserDTO(user) }
