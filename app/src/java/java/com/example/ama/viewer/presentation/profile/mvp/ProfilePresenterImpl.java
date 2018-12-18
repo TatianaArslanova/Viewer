@@ -12,50 +12,56 @@ import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
-public class MainListPresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
+public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements MainPresenter {
 
     private final ApiRepository apiRepository;
     private final DBRepository dbRepository;
-    private final CompositeDisposable disposable;
     private final Scheduler observeOnScheduler;
+    private final CompositeDisposable compositeDisposable;
+    private Disposable loadDisposable;
 
-    public MainListPresenterImpl(ApiRepository apiRepository, DBRepository dbRepository, Scheduler observeOnScheduler) {
+    public ProfilePresenterImpl(ApiRepository apiRepository, DBRepository dbRepository, Scheduler observeOnScheduler) {
         this.apiRepository = apiRepository;
         this.dbRepository = dbRepository;
         this.observeOnScheduler = observeOnScheduler;
-        disposable = new CompositeDisposable();
+        compositeDisposable = new CompositeDisposable();
     }
 
     @Override
     public void loadData(boolean pullToRefresh) {
-        ifViewAttached(view -> disposable.add(getFromApi()
-                .doOnNext(this::saveToDb)
-                .onErrorResumeNext(getFromDb())
-                .doOnSubscribe(__ -> view.showLoading(pullToRefresh))
-                .subscribe(
-                        this::showContent,
-                        throwable -> showError(throwable, pullToRefresh))));
+        if (loadDisposable == null || loadDisposable.isDisposed()) {
+            ifViewAttached(view -> {
+                loadDisposable = getFromApi()
+                        .doOnNext(this::saveToDb)
+                        .onErrorResumeNext(getFromDb())
+                        .doOnSubscribe(__ -> view.showLoading(pullToRefresh))
+                        .observeOn(observeOnScheduler)
+                        .subscribe(
+                                this::showContent,
+                                throwable -> showError(throwable, pullToRefresh));
+                compositeDisposable.add(loadDisposable);
+            });
+        }
     }
 
     @Override
     public void destroy() {
-        disposable.clear();
+        compositeDisposable.clear();
         super.destroy();
     }
 
     private Observable<GithubUserDTO> getFromDb() {
-        return dbRepository.getUserFromDb()
-                .observeOn(observeOnScheduler);
+        return dbRepository.getUserFromDb();
     }
 
     private Observable<GithubUserDTO> getFromApi() {
-        return apiRepository.loadData()
-                .observeOn(observeOnScheduler);
+        return apiRepository.loadData();
     }
 
     private void saveToDb(GithubUserDTO userDTO) {
-        disposable.add(
+        compositeDisposable.add(
                 dbRepository.saveUserToDb(userDTO)
                         .observeOn(observeOnScheduler)
                         .subscribe(

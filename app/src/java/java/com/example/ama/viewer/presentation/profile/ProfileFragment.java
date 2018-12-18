@@ -21,7 +21,7 @@ import com.example.ama.viewer.data.loader.PicassoImageLoader;
 import com.example.ama.viewer.data.api.dto.GithubUserDTO;
 import com.example.ama.viewer.data.repo.ApiRepositoryImpl;
 import com.example.ama.viewer.data.repo.DBRepositoryImpl;
-import com.example.ama.viewer.presentation.profile.mvp.MainListPresenterImpl;
+import com.example.ama.viewer.presentation.profile.mvp.ProfilePresenterImpl;
 import com.example.ama.viewer.presentation.profile.mvp.base.MainPresenter;
 import com.example.ama.viewer.presentation.profile.mvp.base.MainView;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState;
@@ -117,7 +117,7 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
     @NonNull
     @Override
     public MainPresenter createPresenter() {
-        return new MainListPresenterImpl(
+        return new ProfilePresenterImpl(
                 new ApiRepositoryImpl(
                         ViewerApp.getInstance().getGithubApi()),
                 new DBRepositoryImpl(new RealmConfiguration.Builder().build()),
