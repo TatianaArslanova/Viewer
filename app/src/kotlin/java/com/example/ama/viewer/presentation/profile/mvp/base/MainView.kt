@@ -6,4 +6,6 @@ import com.hannesdorfmann.mosby3.mvp.lce.MvpLceView
 interface MainView : MvpLceView<GithubUserDTO> {
 
     fun hasLoadedData(): Boolean
+
+    fun showToastError(message: String)
 }

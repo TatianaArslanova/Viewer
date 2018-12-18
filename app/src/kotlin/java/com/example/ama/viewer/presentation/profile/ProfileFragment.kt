@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.widget.CardView
 import android.view.*
 import android.widget.ImageView
+import android.widget.Toast
 import com.example.ama.viewer.R
 import com.example.ama.viewer.ViewerApp
 import com.example.ama.viewer.data.api.dto.GithubUserDTO
@@ -118,4 +119,8 @@ class ProfileFragment : MvpLceViewStateFragment<CardView, GithubUserDTO, MainVie
     }
 
     override fun hasLoadedData() = githubUserDTO != null
+
+    override fun showToastError(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 }
