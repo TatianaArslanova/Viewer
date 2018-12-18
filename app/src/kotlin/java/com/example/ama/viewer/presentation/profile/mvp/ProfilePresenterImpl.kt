@@ -17,11 +17,15 @@ class ProfilePresenterImpl(
         private val observeOnScheduler: Scheduler
 ) : MvpBasePresenter<MainView>(), MainPresenter {
 
+    companion object {
+        const val LOGIN = "JakeWharton"
+    }
+
     private val compositeDisposable = CompositeDisposable()
     private var loadDisposable: Disposable? = null
 
     override fun loadData(pullToRefresh: Boolean) {
-        if (loadDisposable?.isDisposed == true) {
+        if (loadDisposable==null || loadDisposable?.isDisposed == true) {
             ifViewAttached { view ->
                 loadDisposable = getFromApi()
                         .doOnNext { user -> saveToDb(user) }
@@ -39,9 +43,9 @@ class ProfilePresenterImpl(
         super.destroy()
     }
 
-    private fun getFromGb() = dbRepository.getUserFromDb()
+    private fun getFromGb() = dbRepository.getUserFromDb(LOGIN)
 
-    private fun getFromApi() = apiRepository.loadData()
+    private fun getFromApi() = apiRepository.loadData(LOGIN)
 
     private fun showContent(userDTO: GithubUserDTO) {
         ifViewAttached { view ->

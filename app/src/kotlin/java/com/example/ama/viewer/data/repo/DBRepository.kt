@@ -6,7 +6,7 @@ import io.reactivex.Observable
 
 interface DBRepository {
 
-    fun getUserFromDb(): Observable<GithubUserDTO>
+    fun getUserFromDb(login: String): Observable<GithubUserDTO>
 
     fun saveUserToDb(user: GithubUserDTO): Completable
 }

@@ -4,11 +4,12 @@ import com.example.ama.viewer.data.entity.GithubUser
 import com.google.gson.annotations.SerializedName
 
 data class GithubUserDTO(
-        @SerializedName("avatar_url")
-        val avatar: String?,
 
         @SerializedName("login")
         private val _login: String?,
+
+        @SerializedName("avatar_url")
+        val avatar: String?,
 
         @SerializedName("name")
         private val _name: String?,

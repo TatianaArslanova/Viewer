@@ -9,12 +9,8 @@ class ApiRepositoryImpl(
         private val githubApi: GithubApi
 ) : ApiRepository {
 
-    companion object {
-        const val USERNAME = "JakeWharton"
-    }
-
-    override fun loadData(): Observable<GithubUserDTO> =
-            githubApi.getUserByUsername(USERNAME)
+    override fun loadData(login: String): Observable<GithubUserDTO> =
+            githubApi.getUserByUsername(login)
                     .subscribeOn(Schedulers.io())
 
 }

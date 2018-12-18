@@ -12,10 +12,17 @@ class DBRepositoryImpl(
         private val configuration: RealmConfiguration
 ) : DBRepository {
 
+    companion object {
+        private const val PRIMARY_KEY = "login"
+    }
+
     var realm: Realm? = null
 
-    override fun getUserFromDb(): Observable<GithubUserDTO> =
-            Observable.defer { Observable.fromCallable<GithubUser> { realm?.where(GithubUser::class.java)?.findFirst() } }
+    override fun getUserFromDb(login: String): Observable<GithubUserDTO> =
+            Observable.defer {
+                Observable.fromCallable<GithubUser>
+                { realm?.where(GithubUser::class.java)?.equalTo(PRIMARY_KEY, login)?.findFirst() }
+            }
                     .doOnSubscribe { tryToOpenRealm() }
                     .doFinally { this.tryToCloseRealm() }
                     .map { user -> GithubUserDTO(user) }
