@@ -25,7 +25,7 @@ class ProfilePresenterImpl(
     private var loadDisposable: Disposable? = null
 
     override fun loadData(pullToRefresh: Boolean) {
-        if (loadDisposable==null || loadDisposable?.isDisposed == true) {
+        if (loadDisposable == null || loadDisposable?.isDisposed == true) {
             ifViewAttached { view ->
                 loadDisposable = getFromApi()
                         .doOnNext { user -> saveToDb(user) }
@@ -65,6 +65,9 @@ class ProfilePresenterImpl(
     }
 
     private fun showError(throwable: Throwable, pullToRefresh: Boolean) {
-        ifViewAttached { view -> view.showError(throwable, pullToRefresh) }
+        ifViewAttached { view ->
+            val showToastError = if (view.hasLoadedData()) pullToRefresh else false
+            view.showError(throwable, showToastError)
+        }
     }
 }

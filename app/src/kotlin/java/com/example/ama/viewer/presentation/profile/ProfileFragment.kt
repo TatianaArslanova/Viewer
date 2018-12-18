@@ -89,7 +89,7 @@ class ProfileFragment : MvpLceViewStateFragment<CardView, GithubUserDTO, MainVie
     override fun getData() = githubUserDTO
 
     override fun getErrorMessage(e: Throwable?, pullToRefresh: Boolean): String {
-        if (pullToRefresh) srl_layout.isRefreshing = false
+        if (srl_layout.isRefreshing) srl_layout.isRefreshing = false
         return e?.message ?: resources.getString(R.string.unknown_error)
     }
 
@@ -116,4 +116,6 @@ class ProfileFragment : MvpLceViewStateFragment<CardView, GithubUserDTO, MainVie
         super.animateLoadingViewIn()
         srl_layout.visibility = View.GONE
     }
+
+    override fun hasLoadedData() = githubUserDTO != null
 }
