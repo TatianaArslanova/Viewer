@@ -3,18 +3,23 @@ package com.example.ama.viewer.data.repo;
 import com.example.ama.viewer.data.api.dto.GithubUserDTO;
 import com.example.ama.viewer.data.entity.GithubUser;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
+@Singleton
 public class DBRepositoryImpl implements DBRepository {
 
     private final static String PRIMARY_KEY = "login";
     private RealmConfiguration configuration;
     private Realm realm;
 
+    @Inject
     public DBRepositoryImpl(RealmConfiguration configuration) {
         this.configuration = configuration;
     }

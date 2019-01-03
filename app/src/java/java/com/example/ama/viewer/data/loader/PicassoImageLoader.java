@@ -4,10 +4,15 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class PicassoImageLoader implements ImageLoader<ImageView> {
     private Picasso picasso;
 
-    public PicassoImageLoader(Picasso picasso) {
+    @Inject
+    PicassoImageLoader(Picasso picasso) {
         this.picasso = picasso;
     }
 

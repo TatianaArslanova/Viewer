@@ -14,6 +14,8 @@ import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.CompositeDisposable;
@@ -28,13 +30,16 @@ public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements 
     private final DBRepository dbRepository;
     private final Scheduler observeOnScheduler;
     private final CompositeDisposable compositeDisposable;
+    private final ResUtils utils;
     private Disposable loadDisposable;
 
-    public ProfilePresenterImpl(ApiRepository apiRepository, DBRepository dbRepository, Scheduler observeOnScheduler) {
+    @Inject
+    public ProfilePresenterImpl(ApiRepository apiRepository, DBRepository dbRepository, Scheduler observeOnScheduler, CompositeDisposable compositeDisposable, ResUtils utils) {
         this.apiRepository = apiRepository;
         this.dbRepository = dbRepository;
         this.observeOnScheduler = observeOnScheduler;
-        compositeDisposable = new CompositeDisposable();
+        this.compositeDisposable = compositeDisposable;
+        this.utils = utils;
     }
 
     @Override
@@ -66,20 +71,20 @@ public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements 
     private Observable<GithubUserDTO> updateUser() {
         return getFromApi()
                 .observeOn(observeOnScheduler)
-                .doOnError(throwable -> showLighError(handleError(throwable)))
+                .doOnError(throwable -> showLightError(handleError(throwable)))
                 .onErrorResumeNext(getFromDb());
     }
 
     private Throwable handleError(Throwable throwable) {
         if (throwable instanceof NullPointerException) {
-            return new Throwable(ResUtils.getString(R.string.no_saved_data_error));
+            return new Throwable(utils.getString(R.string.no_saved_data_error));
         } else if (throwable instanceof HttpException) {
-            return new Throwable(ResUtils.getString(R.string.server_error_message));
+            return new Throwable(utils.getString(R.string.server_error_message));
         } else if (throwable instanceof SocketTimeoutException) {
-            return new Throwable(ResUtils.getString(R.string.timeout_error_message));
+            return new Throwable(utils.getString(R.string.timeout_error_message));
         } else if (throwable instanceof UnknownHostException) {
-            return new Throwable(ResUtils.getString(R.string.check_connection_error_message));
-        } else return new Throwable(ResUtils.getString(R.string.unknown_error));
+            return new Throwable(utils.getString(R.string.check_connection_error_message));
+        } else return new Throwable(utils.getString(R.string.unknown_error));
     }
 
     @Override
@@ -124,7 +129,7 @@ public class ProfilePresenterImpl extends MvpBasePresenter<MainView> implements 
         });
     }
 
-    private void showLighError(Throwable throwable) {
+    private void showLightError(Throwable throwable) {
         ifViewAttached(view -> view.showToastError(throwable.getMessage()));
     }
 }

@@ -6,10 +6,14 @@ import android.support.annotation.Nullable;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
+@Singleton
 public class RequestHeadersInterceptor implements Interceptor {
     private static final String UNKNOWN = "UNKNOWN";
     private static final String MEDIA_TYPE = "application/vnd.github.v3+json";
@@ -17,6 +21,7 @@ public class RequestHeadersInterceptor implements Interceptor {
     @Nullable
     private PackageInfo packageInfo;
 
+    @Inject
     public RequestHeadersInterceptor(@Nullable PackageInfo packageInfo) {
         this.packageInfo = packageInfo;
     }

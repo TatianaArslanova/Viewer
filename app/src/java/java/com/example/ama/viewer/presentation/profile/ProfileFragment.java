@@ -1,5 +1,6 @@
 package com.example.ama.viewer.presentation.profile;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,9 +21,6 @@ import com.example.ama.viewer.ViewerApp;
 import com.example.ama.viewer.data.api.dto.GithubUserDTO;
 import com.example.ama.viewer.data.loader.ImageLoader;
 import com.example.ama.viewer.data.loader.PicassoImageLoader;
-import com.example.ama.viewer.data.repo.ApiRepositoryImpl;
-import com.example.ama.viewer.data.repo.DBRepositoryImpl;
-import com.example.ama.viewer.presentation.profile.mvp.ProfilePresenterImpl;
 import com.example.ama.viewer.presentation.profile.mvp.base.MainPresenter;
 import com.example.ama.viewer.presentation.profile.mvp.base.MainView;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState;
@@ -30,18 +28,24 @@ import com.hannesdorfmann.mosby3.mvp.viewstate.lce.MvpLceViewStateFragment;
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState;
 import com.squareup.picasso.Picasso;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.realm.RealmConfiguration;
+import dagger.Lazy;
+import dagger.android.support.AndroidSupportInjection;
 
 public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUserDTO, MainView, MainPresenter>
         implements MainView {
 
     private GithubUserDTO githubUserDTO;
     private Unbinder unbinder;
-    private ImageLoader<ImageView> imageLoader;
+
+    @Inject
+    ImageLoader<ImageView> imageLoader;
+    @Inject
+    Lazy<MainPresenter> presenterLazy;
 
     @BindView(R.id.iv_avatar)
     ImageView ivAvatar;
@@ -67,10 +71,15 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
     }
 
     @Override
+    public void onAttach(Context context) {
+        AndroidSupportInjection.inject(this);
+        super.onAttach(context);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        imageLoader = new PicassoImageLoader(new Picasso.Builder(ViewerApp.getInstance()).build());
     }
 
     @Nullable
@@ -118,11 +127,7 @@ public class ProfileFragment extends MvpLceViewStateFragment<CardView, GithubUse
     @NonNull
     @Override
     public MainPresenter createPresenter() {
-        return new ProfilePresenterImpl(
-                new ApiRepositoryImpl(
-                        ViewerApp.getInstance().getGithubApi()),
-                new DBRepositoryImpl(new RealmConfiguration.Builder().build()),
-                AndroidSchedulers.mainThread());
+        return presenterLazy.get();
     }
 
     @NonNull
