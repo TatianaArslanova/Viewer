@@ -18,7 +18,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-@Module
+@Module(includes = OkHttpModule.class)
 public class NetworkModule {
     private static final String BASE_URL = "https://api.github.com/";
 
@@ -32,16 +32,6 @@ public class NetworkModule {
                 .baseUrl(BASE_URL)
                 .build()
                 .create(GithubApi.class);
-    }
-
-    @Provides
-    @Singleton
-    OkHttpClient provideOkHttpClient(RequestHeadersInterceptor requestHeadersInterceptor,
-                                     StethoInterceptor stethoInterceptor) {
-        return new OkHttpClient.Builder()
-                .addInterceptor(requestHeadersInterceptor)
-                .addNetworkInterceptor(stethoInterceptor)
-                .build();
     }
 
     @Provides

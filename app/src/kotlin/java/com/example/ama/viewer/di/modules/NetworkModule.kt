@@ -14,7 +14,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [OkHttpModule::class])
 class NetworkModule {
 
     companion object {
@@ -31,15 +31,6 @@ class NetworkModule {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(GithubApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(requestHeadersInterceptor: RequestHeadersInterceptor,
-                            stethoInterceptor: StethoInterceptor): OkHttpClient =
-            OkHttpClient.Builder()
-                    .addInterceptor(requestHeadersInterceptor)
-                    .addNetworkInterceptor(stethoInterceptor)
-                    .build()
 
     @Provides
     @Singleton
