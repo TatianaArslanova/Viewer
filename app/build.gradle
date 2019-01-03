@@ -84,10 +84,10 @@ dependencies {
     kapt "io.realm:realm-annotations-processor:5.8.0"
 
     implementation "com.google.dagger:dagger:$daggerVer"
-    kapt "com.google.dagger:dagger-compiler:$daggerVer"
     implementation "com.google.dagger:dagger-android:$daggerVer"
-    kapt "com.google.dagger:dagger-android-processor:$daggerVer"
     implementation "com.google.dagger:dagger-android-support:$daggerVer"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVer"
+    kapt "com.google.dagger:dagger-compiler:$daggerVer"
 }
 repositories {
     mavenCentral()

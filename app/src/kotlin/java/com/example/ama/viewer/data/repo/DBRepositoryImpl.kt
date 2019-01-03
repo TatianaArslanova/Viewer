@@ -7,8 +7,9 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import javax.inject.Inject
 
-class DBRepositoryImpl(
+class DBRepositoryImpl @Inject constructor(
         private val configuration: RealmConfiguration
 ) : DBRepository {
 

@@ -3,8 +3,9 @@ package com.example.ama.viewer.data.interceptor
 import android.content.pm.PackageInfo
 import okhttp3.Interceptor
 import okhttp3.Response
+import javax.inject.Inject
 
-class RequestHeadersInterceptor(
+class RequestHeadersInterceptor @Inject constructor(
         private val packageInfo: PackageInfo?
 ) : Interceptor {
 

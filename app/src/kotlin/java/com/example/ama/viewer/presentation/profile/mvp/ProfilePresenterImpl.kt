@@ -16,18 +16,20 @@ import io.reactivex.disposables.Disposable
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-class ProfilePresenterImpl(
+class ProfilePresenterImpl @Inject constructor(
         private val apiRepository: ApiRepository,
         private val dbRepository: DBRepository,
-        private val observeOnScheduler: Scheduler
+        private val observeOnScheduler: Scheduler,
+        private val compositeDisposable: CompositeDisposable,
+        private val utils: ResUtils
 ) : MvpBasePresenter<MainView>(), MainPresenter {
 
     companion object {
         const val LOGIN = "JakeWharton"
     }
 
-    private val compositeDisposable = CompositeDisposable()
     private var loadDisposable: Disposable? = null
 
     override fun loadData(pullToRefresh: Boolean) {
@@ -58,11 +60,11 @@ class ProfilePresenterImpl(
 
     private fun handleError(throwable: Throwable) =
             when (throwable) {
-                is NullPointerException -> Throwable(ResUtils.getString(R.string.no_saved_data_error))
-                is HttpException -> Throwable(ResUtils.getString(R.string.server_error_message))
-                is SocketTimeoutException -> Throwable(ResUtils.getString(R.string.timeout_error_message))
-                is UnknownHostException -> Throwable(ResUtils.getString(R.string.check_connection_error_message))
-                else -> Throwable(ResUtils.getString(R.string.unknown_error))
+                is NullPointerException -> Throwable(utils.getString(R.string.no_saved_data_error))
+                is HttpException -> Throwable(utils.getString(R.string.server_error_message))
+                is SocketTimeoutException -> Throwable(utils.getString(R.string.timeout_error_message))
+                is UnknownHostException -> Throwable(utils.getString(R.string.check_connection_error_message))
+                else -> Throwable(utils.getString(R.string.unknown_error))
             }
 
     override fun destroy() {

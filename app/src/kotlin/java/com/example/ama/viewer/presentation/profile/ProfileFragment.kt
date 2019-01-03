@@ -1,37 +1,41 @@
 package com.example.ama.viewer.presentation.profile
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.CardView
 import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
 import com.example.ama.viewer.R
-import com.example.ama.viewer.ViewerApp
 import com.example.ama.viewer.data.api.dto.GithubUserDTO
 import com.example.ama.viewer.data.loader.ImageLoader
-import com.example.ama.viewer.data.loader.PicassoImageLoader
-import com.example.ama.viewer.data.repo.ApiRepositoryImpl
-import com.example.ama.viewer.data.repo.DBRepositoryImpl
-import com.example.ama.viewer.presentation.profile.mvp.ProfilePresenterImpl
 import com.example.ama.viewer.presentation.profile.mvp.base.MainPresenter
 import com.example.ama.viewer.presentation.profile.mvp.base.MainView
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.LceViewState
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.MvpLceViewStateFragment
 import com.hannesdorfmann.mosby3.mvp.viewstate.lce.data.RetainingLceViewState
-import com.squareup.picasso.Picasso
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.realm.RealmConfiguration
+import dagger.Lazy
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.content_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.*
+import javax.inject.Inject
 
 class ProfileFragment : MvpLceViewStateFragment<CardView, GithubUserDTO, MainView, MainPresenter>(), MainView {
 
     private var githubUserDTO: GithubUserDTO? = null
-    private val imageLoader: ImageLoader<ImageView> = PicassoImageLoader(
-            Picasso.Builder(ViewerApp.instance).build())
+
+    @Inject
+    lateinit var imageLoader: ImageLoader<ImageView>
+    @Inject
+    lateinit var presenterLazy: Lazy<MainPresenter>
 
     companion object {
         fun newInstance() = ProfileFragment()
+    }
+
+    override fun onAttach(context: Context?) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,11 +68,7 @@ class ProfileFragment : MvpLceViewStateFragment<CardView, GithubUserDTO, MainVie
         presenter.loadData(pullToRefresh)
     }
 
-    override fun createPresenter(): MainPresenter =
-            ProfilePresenterImpl(
-                    ApiRepositoryImpl(ViewerApp.instance.githubApi),
-                    DBRepositoryImpl(RealmConfiguration.Builder().build()),
-                    AndroidSchedulers.mainThread())
+    override fun createPresenter(): MainPresenter = presenterLazy.get()
 
     override fun createViewState(): LceViewState<GithubUserDTO, MainView> =
             RetainingLceViewState<GithubUserDTO, MainView>()

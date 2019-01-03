@@ -1,9 +1,10 @@
 package com.example.ama.viewer.utils
 
-import com.example.ama.viewer.ViewerApp
+import android.content.Context
+import javax.inject.Inject
 
-object ResUtils {
+class ResUtils @Inject constructor(val app: Context) {
 
-    fun getString(resId: Int) =
-            ViewerApp.instance.resources.getString(resId)
+    fun getString(resId: Int): String =
+            app.resources.getString(resId)
 }
